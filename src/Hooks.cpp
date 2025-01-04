@@ -1,24 +1,45 @@
 #include "Hooks.h"
 
+
 void Hooks::Install() {
-    //uint8_t data3[] = {0xe, 0x84, 0xc5, 0x0, 0x0, 0x0};  // allow disenchant anything // SkyrimSE.exe+9091ac 0x90
-    //REL::safe_write(REL::RelocationID(37945, 38901).address() + REL::Relocate(0x0, 0x3c), data3, sizeof(data3));
-    EquipHook::Install();
+    EquipSpellHook::Install();
 }
 
-void Hooks::EquipHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
-                             const RE::BGSEquipSlot* a_slot) {
-    logger::trace("Called: {}", a_actor->GetName(), a_spell->GetName(), a_slot->GetName());
+RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot** a_slot) {
+    if (a_actor && a_slot && *a_slot) {
+        if (auto item = a_actor->GetEquippedObjectInSlot(*a_slot)) {
+            if (auto weapon = item->As<RE::TESObjectWEAP>()) {
+                if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
+                    return weapon;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+                                  RE::BGSEquipSlot** a_slot) {
+
+    if (auto staff = GetEquipedStaff(a_actor, a_slot)) {
+        logger::trace("{} Attempted to replace staff staff {} equiped with spell {}", a_actor->GetName(), staff->GetName(), a_spell->GetName());
+        return;
+    }
+
     originalFunction(a_manager, a_actor, a_spell, a_slot);
 }
 
-void Hooks::EquipHook::Install() {
-
-        //SE ID: 37939 SE Offset: 0x47 (Heuristic)
-        //AE ID: 38895 AE Offset: 0x47
-        SKSE::AllocTrampoline(14);
-        auto& trampoline = SKSE::GetTrampoline();
-        auto address = REL::RelocationID(37939, 38895).address();
-        auto offset = REL::Relocate(0x47, 0x47);
-        originalFunction = trampoline.write_call<5>(address+offset, thunk);
+void Hooks::EquipSpellHook::Install() {
+    //SE ID: 37952 SE Offset: 0xd7 (Heuristic)
+    //AE ID: 38908 AE Offset: 0xd7
+    // 
+    //SE ID: 37950 SE Offset: 0xc5 (Heuristic)
+    //AE ID: 38906 AE Offset: 0xca
+    // 
+    //SE ID: 37939 SE Offset: 0x47 (Heuristic)
+    //AE ID: 38895 AE Offset: 0x47
+    SKSE::AllocTrampoline(14 * 3);
+    auto& trampoline = SKSE::GetTrampoline();
+    trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7), thunk);
+    trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk);
+    originalFunction = trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunk);
 }
