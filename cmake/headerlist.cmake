@@ -5,4 +5,6 @@ set(headers ${headers}
 	include/UI.h
 	include/Hooks.h
 	include/Core.h
+	include/Persistence.h
+	include/Serializer.h
 )

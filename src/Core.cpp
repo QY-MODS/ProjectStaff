@@ -37,6 +37,30 @@ void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::Ex
                                                        true);
 }
 
+enum class WornSlot {
+    None,
+    Left,
+    Right
+};
+
+RE::ActorValue GetChargeValue(WornSlot slot) {
+    if (slot == WornSlot::Right) {
+        return RE::ActorValue::kRightItemCharge;
+    }
+    return RE::ActorValue::kLeftItemCharge;
+}
+
+WornSlot GetWornSlot(RE::ExtraDataList* a_extraData) {
+    if (a_extraData->HasType(RE::ExtraDataType::kWorn)) {
+        return WornSlot::Right;
+    }
+    if (a_extraData->HasType(RE::ExtraDataType::kWornLeft)) {
+        return WornSlot::Left;
+    }
+    return WornSlot::None;
+}
+
+
 RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell) {
 
     auto factory = RE::IFormFactory::GetConcreteFormFactoryByType<RE::EnchantmentItem>();
@@ -76,17 +100,13 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
                         extra->Add(enchantment_fake);
 
                         if (auto actor = a_actor->AsActorValueOwner()) {
-                            bool wornLeft = extra->HasType(RE::ExtraDataType::kWornLeft);
-                            bool wornRight = !wornLeft && extra->HasType(RE::ExtraDataType::kWorn);
-                            if (wornLeft || wornRight) {
-                                RE::ActorValue actorValue =
-                                    wornLeft ? RE::ActorValue::kLeftItemCharge : RE::ActorValue::kRightItemCharge;
 
-                                float itemCharge = actor->GetActorValue(actorValue);
+                            auto wornSlot = GetWornSlot(extra);
 
-                                actor->ModActorValue(actorValue, 10000);
-
-                            }
+                            if (wornSlot != WornSlot::None) {
+								auto actorValue = GetChargeValue(wornSlot);
+								actor->ModActorValue(actorValue, 10000);
+							}
                         }
                     }
                     RefreshEquipedItem(a_actor, staff, extra, a_slot);

@@ -14,5 +14,9 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     logger::info("Plugin loaded");
     UI::Register();
     Hooks::Install();
+
+
+
+
     return true;
 }
