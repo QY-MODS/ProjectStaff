@@ -98,10 +98,10 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::EnchantmentI
     if (extra->HasType<RE::ExtraEnchantment>()) {
         auto e = extra->GetByType<RE::ExtraEnchantment>();
         e->enchantment = ench;
-        e->charge = 10000;
+        e->charge = 20;
     } else {
         auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
-        enchantment_fake->charge = 10000;
+        enchantment_fake->charge = 20;
         enchantment_fake->enchantment = ench;
 
         extra->Add(enchantment_fake);
@@ -111,7 +111,7 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::EnchantmentI
 
             if (wornSlot != WornSlot::None) {
                 auto actorValue = GetChargeValue(wornSlot);
-                actor->ModActorValue(actorValue, 10000);
+                actor->ModActorValue(actorValue, 20);
             }
         }
     }
