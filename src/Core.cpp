@@ -78,6 +78,31 @@ RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell) {
     return nullptr;
 }
 
+void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::EnchantmentItem* ench, RE::ExtraDataList* extra, RE::BGSEquipSlot* a_slot) {
+    logger::trace("enchantment {}", ench->GetFormType());
+
+    if (extra->HasType<RE::ExtraEnchantment>()) {
+        auto e = extra->GetByType<RE::ExtraEnchantment>();
+        e->enchantment = ench;
+        e->charge = 10000;
+    } else {
+        auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
+        enchantment_fake->charge = 10000;
+        enchantment_fake->enchantment = ench;
+        extra->Add(enchantment_fake);
+
+        if (auto actor = a_actor->AsActorValueOwner()) {
+            auto wornSlot = GetWornSlot(extra);
+
+            if (wornSlot != WornSlot::None) {
+                auto actorValue = GetChargeValue(wornSlot);
+                actor->ModActorValue(actorValue, 10000);
+            }
+        }
+    }
+    RefreshEquipedItem(a_actor, staff, extra, a_slot);
+}
+
 bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                 RE::BGSEquipSlot* a_slot) {
     if (auto staff = GetEquipedStaff(a_actor, a_slot)) 
@@ -87,29 +112,7 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
 
         if (auto extra = GetInventoryExtraList(a_actor, staff)) {
                 if (auto ench = GetEnchantment(a_spell)) {
-                    logger::trace("enchantment {}", ench->GetFormType());
-
-                    if (extra->HasType<RE::ExtraEnchantment>()) {
-                        auto e = extra->GetByType<RE::ExtraEnchantment>();
-                        e->enchantment = ench;
-                        e->charge = 10000;
-                    } else {
-                        auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
-                        enchantment_fake->charge = 10000;
-                        enchantment_fake->enchantment = ench;
-                        extra->Add(enchantment_fake);
-
-                        if (auto actor = a_actor->AsActorValueOwner()) {
-
-                            auto wornSlot = GetWornSlot(extra);
-
-                            if (wornSlot != WornSlot::None) {
-								auto actorValue = GetChargeValue(wornSlot);
-								actor->ModActorValue(actorValue, 10000);
-							}
-                        }
-                    }
-                    RefreshEquipedItem(a_actor, staff, extra, a_slot);
+                EnchantStaff(a_actor, staff, ench, extra, a_slot);
                 } else {
                     logger::trace("Enchantment not found for spell {}", a_spell->GetName());
                     return false;
