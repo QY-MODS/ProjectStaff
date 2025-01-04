@@ -47,6 +47,8 @@ RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell) {
 		}
         ench->data.castingType = spell->GetCastingType();
         ench->data.delivery = spell->GetDelivery();
+        //ench->data.costOverride = 0;
+        //ench->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
         return ench;
     }
     return nullptr;
