@@ -3,6 +3,8 @@
 
 void Hooks::Install() {
     EquipSpellHook::Install();
+    RE::ScriptEventSourceHolder::GetSingleton()
+        ->AddEventSink(new EquipEvent());
 }
 
 
@@ -30,4 +32,23 @@ void Hooks::EquipSpellHook::Install() {
     trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
     originalFunction = trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunk); // Commonlib
                                              
+}
+
+RE::BSEventNotifyControl Hooks::EquipEvent::ProcessEvent(const RE::TESEquipEvent* a_event,
+                                                         RE::BSTEventSource<RE::TESEquipEvent>* a_eventSource) {
+
+    if (!a_event) {
+        return RE::BSEventNotifyControl::kContinue;
+    }
+
+    if (a_event->actor && a_event->actor->IsPlayerRef()) {
+		if (a_event->equipped) {
+			Core::EquipEvent();
+		}
+        else {
+			Core::UnEquipEvent();
+		}
+	}
+
+    return RE::BSEventNotifyControl::kContinue;
 }

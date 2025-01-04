@@ -2,6 +2,7 @@
 
 
 namespace Core {
+    inline std::atomic<bool> shouldRemoveOnUnequip = false;
 
     struct StaffEnchantment {
         RE::EnchantmentItem* enchantment = nullptr;
@@ -12,4 +13,6 @@ namespace Core {
                               RE::BGSEquipSlot* a_slot);
 
     void PostLoad();
+    void EquipEvent();
+    void UnEquipEvent();
 }

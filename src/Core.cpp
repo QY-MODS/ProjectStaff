@@ -13,7 +13,8 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot)
     }
     return nullptr;
 }
-RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor) {
+
+RE::TESObjectWEAP* GetEquipedStaffLeftHand(RE::Actor* a_actor) {
     if (auto lefthand_weapon = a_actor->GetEquippedObject(true)) {
         if (lefthand_weapon->Is(RE::FormType::Weapon)) {
             auto weapon = skyrim_cast<RE::TESObjectWEAP*>(lefthand_weapon);
@@ -24,6 +25,19 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor) {
     }
 	return nullptr;
 }
+
+RE::TESObjectWEAP* GetEquipedStaffRightHand(RE::Actor* a_actor) {
+    if (auto lefthand_weapon = a_actor->GetEquippedObject(false)) {
+        if (lefthand_weapon->Is(RE::FormType::Weapon)) {
+            auto weapon = skyrim_cast<RE::TESObjectWEAP*>(lefthand_weapon);
+            if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
+                return weapon;
+            }
+        }
+    }
+    return nullptr;
+}
+
 RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* object) {
     auto inv = actor->GetInventory();
 
@@ -42,13 +56,16 @@ RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* o
 }
 void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData,
                         RE::BGSEquipSlot* a_slot) {
+    Core::shouldRemoveOnUnequip.store(false);
 
     RE::ActorEquipManager::GetSingleton()
-        ->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, true, false, false,
+        ->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, false, false, false,
                                                          true, nullptr);
     RE::ActorEquipManager::GetSingleton()
-        ->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false, false,
+        ->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, false, false, false,
                                                        true);
+
+    Core::shouldRemoveOnUnequip.store(true);
 }
 
 enum class WornSlot {
@@ -142,4 +159,34 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
 
 void Core::PostLoad() {
 
+}
+
+void Core::EquipEvent() {}
+
+void Core::UnEquipEvent() {
+
+    if (!shouldRemoveOnUnequip.load()) {
+		return;
+	}
+
+    auto player = RE::PlayerCharacter::GetSingleton();
+    
+    if (auto weapon = player->GetEquippedEntryData(true)) {
+        if (weapon->extraLists && !weapon->extraLists->empty()) {
+            if (auto extra = weapon->extraLists->front()) {
+				if (extra->HasType<RE::ExtraEnchantment>()) {
+					extra->RemoveByType(RE::ExtraDataType::kEnchantment);
+				}
+			}
+        }
+    }
+    if (auto weapon = player->GetEquippedEntryData(false)) {
+        if (weapon->extraLists && !weapon->extraLists->empty()) {
+            if (auto extra = weapon->extraLists->front()) {
+                if (extra->HasType<RE::ExtraEnchantment>()) {
+                    extra->RemoveByType(RE::ExtraDataType::kEnchantment);
+                }
+            }
+        }
+	}
 }
