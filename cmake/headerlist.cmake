@@ -4,4 +4,5 @@ set(headers ${headers}
 	include/SKSEMenuFramework.h
 	include/UI.h
 	include/Hooks.h
+	include/Core.h
 )
