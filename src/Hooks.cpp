@@ -17,6 +17,13 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot** a_slot
     }
     return nullptr;
 }
+
+void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData, RE::BGSEquipSlot* a_slot) {
+
+    RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, false, false, false, true,nullptr);
+    RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, false, false, false, true);
+}
+
 void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                   RE::BGSEquipSlot** a_slot) {
 
@@ -30,20 +37,41 @@ void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a
         if (it != inv.end()) {
             if (auto& data = it->second.second) {
                 if (!data->extraLists->empty()) {
-                    if (auto front = data->extraLists->front()) {
-                        auto form = RE::TESForm::LookupByID<RE::EnchantmentItem>(0xb62e1);
-                        auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
-                        auto charge_fake = RE::BSExtraData::Create<RE::ExtraCharge>();
-                        charge_fake->charge = 100.f;
-                        enchantment_fake->charge = 100;
-                        enchantment_fake->enchantment = form;   
-                        front->Add(enchantment_fake);
-                        front->Add(charge_fake);
+                    if (auto extra = data->extraLists->front()) {
 
-                        auto added_charge = front->GetByType<RE::ExtraCharge>();
 
-                        logger::trace("charge {}", added_charge->charge);
+                        auto form = RE::TESForm::LookupByID<RE::EnchantmentItem>(0x29b5c);
 
+
+                        logger::trace("enchantment {}", form->GetFormType());
+
+
+                        if (extra->HasType<RE::ExtraEnchantment>()) {
+                            auto e = extra->GetByType<RE::ExtraEnchantment>();
+                            e->enchantment = form;
+                            e->charge = 10000;
+                        } else {
+                            auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
+                            enchantment_fake->charge = 10000;
+                            enchantment_fake->enchantment = form;   
+                            extra->Add(enchantment_fake);
+
+                            if (auto actor = a_actor->AsActorValueOwner()) {
+                                bool wornLeft = extra->HasType(RE::ExtraDataType::kWornLeft);
+                                bool wornRight = !wornLeft && extra->HasType(RE::ExtraDataType::kWorn);
+                                if (wornLeft || wornRight) {
+                                    RE::ActorValue actorValue =
+                                        wornLeft ? RE::ActorValue::kLeftItemCharge : RE::ActorValue::kRightItemCharge;
+
+                                    float itemCharge = actor->GetActorValue(actorValue);
+
+                                    actor->ModActorValue(actorValue, 10000);
+
+                                    RefreshEquipedItem(a_actor, staff, extra, *a_slot);
+  
+                                }
+                            }
+                        }
                     } else {
                         logger::trace("no fonrt");
                     }
