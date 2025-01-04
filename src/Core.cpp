@@ -13,6 +13,17 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot)
     }
     return nullptr;
 }
+RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor) {
+    if (auto lefthand_weapon = a_actor->GetEquippedObject(true)) {
+        if (lefthand_weapon->Is(RE::FormType::Weapon)) {
+            auto weapon = skyrim_cast<RE::TESObjectWEAP*>(lefthand_weapon);
+            if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
+                return weapon;
+            }
+        }
+    }
+	return nullptr;
+}
 RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* object) {
     auto inv = actor->GetInventory();
 
@@ -31,9 +42,12 @@ RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* o
 }
 void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData,
                         RE::BGSEquipSlot* a_slot) {
-    RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, false, false, false,
+
+    RE::ActorEquipManager::GetSingleton()
+        ->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, true, false, false,
                                                          true, nullptr);
-    RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, false, false, false,
+    RE::ActorEquipManager::GetSingleton()
+        ->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false, false,
                                                        true);
 }
 
@@ -89,6 +103,7 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::EnchantmentI
         auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
         enchantment_fake->charge = 10000;
         enchantment_fake->enchantment = ench;
+
         extra->Add(enchantment_fake);
 
         if (auto actor = a_actor->AsActorValueOwner()) {
@@ -112,7 +127,7 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
 
         if (auto extra = GetInventoryExtraList(a_actor, staff)) {
                 if (auto ench = GetEnchantment(a_spell)) {
-                EnchantStaff(a_actor, staff, ench, extra, a_slot);
+                    EnchantStaff(a_actor, staff, ench, extra, a_slot);
                 } else {
                     logger::trace("Enchantment not found for spell {}", a_spell->GetName());
                     return false;
@@ -123,4 +138,8 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
         return false;
     }
     return true;
+}
+
+void Core::PostLoad() {
+
 }
