@@ -39,17 +39,15 @@ void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::Ex
 
 RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell) {
 
-    auto factory = RE::IFormFactory::GetFormFactoryByType(RE::FormType::Enchantment);
-    if (auto createdForm = factory->Create()) {
-        if (auto ench = createdForm->As<RE::EnchantmentItem>()) {
-            ench->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
-            for (auto effect : spell->effects) {
-				ench->effects.push_back(effect);
-			}
-            ench->data.castingType = spell->GetCastingType();
-            ench->data.delivery = spell->GetDelivery();
-            return ench;
-        }
+    auto factory = RE::IFormFactory::GetConcreteFormFactoryByType<RE::EnchantmentItem>();
+    if (auto ench = factory->Create()) {
+        ench->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
+        for (auto effect : spell->effects) {
+			ench->effects.push_back(effect);
+		}
+        ench->data.castingType = spell->GetCastingType();
+        ench->data.delivery = spell->GetDelivery();
+        return ench;
     }
     return nullptr;
 }
