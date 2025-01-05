@@ -3,7 +3,7 @@
 #include "StaffEnchantment.h"
 #include "Core.h"
 
-#define VERSION 2
+#define VERSION 4
 
 static void SaveCallback(SKSE::SerializationInterface* a_intfc) {
     if (a_intfc->OpenRecord('SPEL', VERSION)) {
@@ -15,6 +15,11 @@ static void SaveCallback(SKSE::SerializationInterface* a_intfc) {
         for (auto& [key, value] : dynamicForms) {
             serializer.WriteForm(value->enchantment);
             serializer.WriteForm(value->spell);
+            serializer.Write<float>(value->magnitudeMult);
+            serializer.Write<float>(value->duartionMult);
+            serializer.Write<float>(value->areaMult);
+            serializer.Write<float>(value->costMult);
+            serializer.Write<int32_t>(value->costOverride);
         }
 
     }
@@ -43,9 +48,14 @@ static void LoadCallback(SKSE::SerializationInterface* a_intfc) {
             for (auto i = 0; i < size; ++i) {
                 auto enchantment = serializer.ReadForm<RE::EnchantmentItem>();
                 auto spell = serializer.ReadForm<RE::SpellItem>();
-                auto se = new StaffEnchantment();
-                se->enchantment = enchantment;
-                se->spell = spell;
+                auto se = new StaffEnchantment(enchantment, spell);
+
+                se->magnitudeMult = serializer.Read<float>();
+                se->duartionMult = serializer.Read<float>();
+                se->areaMult = serializer.Read<float>();
+                se->costMult = serializer.Read<float>();
+                se->costOverride = serializer.Read<int32_t>();
+
                 se->CopyEffects();
                 dynamicForms[enchantment->GetFormID()] = se;
             }

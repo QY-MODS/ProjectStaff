@@ -107,14 +107,10 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra)
     } else {
         auto factory = RE::IFormFactory::GetConcreteFormFactoryByType<RE::EnchantmentItem>();
         if (auto ench = factory->Create()) {
-            auto df = new StaffEnchantment();
-            df->enchantment = ench;
-            df->spell = spell;
-            df->CopyEffects();
             ench->AddChange(1);
+            auto df = new StaffEnchantment(ench, spell);
+            df->CopyEffects();
             dynamicForms[ench->GetFormID()] = df;
-            // ench->data.costOverride = 0;
-            // ench->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
             return df;
         }
     }

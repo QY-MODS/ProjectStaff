@@ -22,8 +22,27 @@ void StaffEnchantment::CopyEffects() {
     enchantment->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
 
     for (auto effect : spell->effects) {
-        enchantment->effects.push_back(effect);
+        auto copy = new RE::Effect();
+        copy->effectItem = effect->effectItem;
+        copy->baseEffect = effect->baseEffect;
+        copy->cost = effect->cost;
+        copy->conditions = effect->conditions;
+
+        copy->effectItem.area *= areaMult;
+        copy->effectItem.duration *= duartionMult;
+        copy->effectItem.magnitude *= magnitudeMult;
+        copy->cost *= magnitudeMult;
+
+
+
+        enchantment->effects.push_back(copy);
     }
+
+    if (costOverride > 0) {
+        enchantment->data.costOverride = 0;
+        enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
+    }
+
     enchantment->data.castingType = spell->GetCastingType();
     enchantment->data.delivery = spell->GetDelivery();
 }
