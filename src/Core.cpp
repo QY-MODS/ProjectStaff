@@ -114,15 +114,22 @@ RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* ext
     return nullptr;
 }
 
-void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataList* extra,
-                  RE::BGSEquipSlot* a_slot) {
+void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataList* extra) {
+    auto wornSlot = GetWornSlot(extra);
+    auto hand = GetHand(wornSlot);
+
+    if (!hand->Valid()) {
+        return;
+    }
 
 
     if (auto actor = a_actor->AsActorValueOwner()) {
-        auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
-        auto wornSlot = GetWornSlot(extra);
 
-        auto hand = GetHand(wornSlot);
+   
+        auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
+
+
+
 
         auto ench = hand->enchantment;
 
@@ -144,7 +151,6 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
             }
         }
     }
-    RefreshEquipedItem(a_actor, staff, extra, a_slot);
 }
 
 bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
@@ -155,7 +161,8 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
 
         if (auto extra = GetInventoryExtraList(a_actor, staff)) {
             if (auto ench = GetEnchantment(a_spell, extra)) {
-                EnchantStaff(a_actor, staff, extra, a_slot);
+                EnchantStaff(a_actor, staff, extra);
+                RefreshEquipedItem(a_actor, staff, extra, a_slot);
             } else {
                 logger::trace("Enchantment not found for spell {}", a_spell->GetName());
                 return false;
@@ -181,7 +188,43 @@ void Core::PostLoad() {
     }
 }
 
-void Core::EquipEvent() {}
+void Core::EquipEvent() {
+    auto player = RE::PlayerCharacter::GetSingleton();
+
+    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
+
+    if (auto obj = player->GetEquippedEntryData(true)) {
+        if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
+            if (obj->extraLists && !obj->extraLists->empty()) {
+                if (auto extra = obj->extraLists->front()) {
+                    auto wornSlot = GetWornSlot(extra);
+                    auto hand = GetHand(wornSlot);
+                    if (hand->Valid()) {
+                        EnchantStaff(player, weapon, extra);
+                        RefreshEquipedItem(player, obj->object, obj->extraLists->front(),
+                                           dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>());
+                    }
+                }
+            }
+        }
+    }
+    if (auto obj = player->GetEquippedEntryData(false)) {
+        if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
+            if (obj->extraLists && !obj->extraLists->empty()) {
+                if (auto extra = obj->extraLists->front()) {
+                    auto wornSlot = GetWornSlot(extra);
+                    auto hand = GetHand(wornSlot);
+                    if (hand->Valid()) {
+                        EnchantStaff(player, weapon, extra);
+                        RefreshEquipedItem(player, obj->object, obj->extraLists->front(),
+                                           dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>());
+                    }
+                }
+            }
+        }
+    }
+
+}
 
 void Core::UnEquipEvent() {
     if (!shouldRemoveOnUnequip.load()) {

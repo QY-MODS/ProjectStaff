@@ -8,10 +8,17 @@ namespace Core {
         RE::EnchantmentItem* enchantment = nullptr;
         RE::SpellItem* spell = nullptr;
 
-        void CopyEffects() {
-
+        bool Valid() {
             if (!enchantment || !spell) {
                 logger::trace("did not copy");
+                return false;
+            }
+            return true;
+        }
+
+        void CopyEffects() {
+
+            if (!Valid()) {
                 return;
             }
             logger::trace("copied");
