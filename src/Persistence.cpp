@@ -3,15 +3,20 @@
 #include "StaffEnchantment.h"
 #include "Core.h"
 
+#define VERSION 2
+
 static void SaveCallback(SKSE::SerializationInterface* a_intfc) {
-    if (a_intfc->OpenRecord('SPEL', 1)) {
+    if (a_intfc->OpenRecord('SPEL', VERSION)) {
 
         auto serializer = Serializer(a_intfc);
 
-        serializer.WriteForm(leftHand->enchantment);
-        serializer.WriteForm(leftHand->spell);
-        serializer.WriteForm(rightHand->enchantment);
-        serializer.WriteForm(rightHand->spell);
+        serializer.Write<uint32_t>(dynamicForms.size());
+
+        for (auto& [key, value] : dynamicForms) {
+            serializer.WriteForm(value->enchantment);
+            serializer.WriteForm(value->spell);
+        }
+
     }
 }
 
@@ -23,14 +28,27 @@ static void LoadCallback(SKSE::SerializationInterface* a_intfc) {
     bool refreshGame = false;
 
     while (a_intfc->GetNextRecordInfo(type, version, length)) {
-        if (type == 'SPEL' && version == 1) {
+        if (type == 'SPEL' && version == VERSION) {
 
             auto serializer = Serializer(a_intfc);
 
-            leftHand->enchantment = serializer.ReadForm<RE::EnchantmentItem>();
-            leftHand->spell = serializer.ReadForm<RE::SpellItem>();
-            rightHand->enchantment = serializer.ReadForm<RE::EnchantmentItem>();
-            rightHand->spell = serializer.ReadForm<RE::SpellItem>();
+            auto size = serializer.Read<uint32_t>();
+
+            for (auto [key, value] : dynamicForms) {
+                delete value;
+            }
+
+            dynamicForms.clear();
+
+            for (auto i = 0; i < size; ++i) {
+                auto enchantment = serializer.ReadForm<RE::EnchantmentItem>();
+                auto spell = serializer.ReadForm<RE::SpellItem>();
+                auto se = new StaffEnchantment();
+                se->enchantment = enchantment;
+                se->spell = spell;
+                se->CopyEffects();
+                dynamicForms[enchantment->GetFormID()] = se;
+            }
 
             Core::PostLoad();
         }

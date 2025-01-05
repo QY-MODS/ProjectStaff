@@ -43,10 +43,8 @@ RE::BSEventNotifyControl Hooks::EquipEvent::ProcessEvent(const RE::TESEquipEvent
 
     if (a_event->actor && a_event->actor->IsPlayerRef()) {
 		if (a_event->equipped) {
-			Core::EquipEvent();
 		}
         else {
-			Core::UnEquipEvent();
 		}
 	}
 

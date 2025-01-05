@@ -1,15 +1,16 @@
 #pragma once
 
 
-struct StaffEnchantment {
+class StaffEnchantment {
+public:
     RE::EnchantmentItem* enchantment = nullptr;
     RE::SpellItem* spell = nullptr;
+
+    ~StaffEnchantment() {}
 
     bool Valid();
 
     void CopyEffects();
 };
 
-
-inline StaffEnchantment* leftHand = new StaffEnchantment();
-inline StaffEnchantment* rightHand = new StaffEnchantment();
+inline std::map<RE::FormID, StaffEnchantment*> dynamicForms;

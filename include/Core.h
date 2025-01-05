@@ -11,6 +11,4 @@ namespace Core {
                               RE::BGSEquipSlot* a_slot);
 
     void PostLoad();
-    void EquipEvent();
-    void UnEquipEvent();
 }
