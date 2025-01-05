@@ -1,4 +1,5 @@
 #include "Core.h"
+
 #include "StaffEnchantment.h"
 
 RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot) {
@@ -14,6 +15,12 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot)
     return nullptr;
 }
 enum class WornSlot { None, Left, Right };
+
+bool GetSlot(RE::BGSEquipSlot* slot) {
+    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
+    auto left = dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip);
+    return slot == left;
+}
 
 RE::InventoryEntryData* GetEquipedStaff(RE::Actor* a_actor, WornSlot hand) {
     if (auto entry = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
@@ -37,38 +44,28 @@ RE::ExtraDataList* GetEquipedExtraList(RE::InventoryEntryData* entry) {
     return nullptr;
 }
 
-
-RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* object) {
-    auto inv = actor->GetInventory();
-
-    auto it = inv.find(object);
-
-    if (it != inv.end()) {
-        if (auto& data = it->second.second) {
-            if (!data->extraLists->empty()) {
-                if (auto extra = data->extraLists->front()) {
-                    return extra;
-                }
+RE::TESForm* GetEquippedObjectInSlot(const RE::Actor* actor, const RE::BGSEquipSlot* slot) {
+    auto _currentProcess = actor->GetActorRuntimeData().currentProcess;
+    if (_currentProcess) {
+        for (const auto& equippedObject : _currentProcess->equippedForms) {
+            if (equippedObject.slot == slot) {
+                return equippedObject.object;
             }
         }
     }
+
     return nullptr;
 }
+
 void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData,
                         RE::BGSEquipSlot* a_slot) {
-    
-    SKSE::GetTaskInterface()->AddTask([a_actor, a_object, a_extraData, a_slot](){
-        Core::isRegularEquip.store(false);
 
-        RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, false, false, false,
+        RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, true, false, false,
                                                              true, nullptr);
-        RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, false, false, false,
-                                                           true);
+        RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false,
+                                                           false, true);
 
-        Core::isRegularEquip.store(true);
-    });
 }
-
 
 RE::ActorValue GetChargeValue(WornSlot slot) {
     if (slot == WornSlot::Right) {
@@ -87,9 +84,7 @@ WornSlot GetWornSlot(RE::ExtraDataList* a_extraData) {
     return WornSlot::None;
 }
 
-
 StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra) {
-
     auto wornSlot = GetWornSlot(extra);
 
     if (extra->HasType<RE::ExtraEnchantment>()) {
@@ -119,11 +114,10 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra)
 
 class PrefixRemover {
     std::string prefix;
+
 public:
-    PrefixRemover(std::string prefix): prefix(prefix) {}
-    std::string Remove(const std::string& input) {
-        return input.substr(prefix.length());
-    }
+    PrefixRemover(std::string prefix) : prefix(prefix) {}
+    std::string Remove(const std::string& input) { return input.substr(prefix.length()); }
     bool Has(const std::string& input) {
         if (input.rfind(prefix, 0) == 0) {
             return true;
@@ -131,8 +125,6 @@ public:
         return false;
     }
 };
-
-
 
 void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataList* extra, StaffEnchantment* se) {
     auto wornSlot = GetWornSlot(extra);
@@ -142,7 +134,6 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
     }
 
     if (auto actor = a_actor->AsActorValueOwner()) {
-   
         auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
 
         auto ench = se->enchantment;
@@ -172,35 +163,59 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
                 }
             }
         }
-
-
     }
+}
+
+bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot) {
+    if (auto obj = a_actor->GetEquippedEntryData(GetSlot(a_slot))) {
+        if (obj->object) {
+            if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
+                if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
+                    if (auto list = GetEquipedExtraList(obj)) {
+                        if (list->HasType<RE::ExtraEnchantment>()) {
+                            if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {
+                                if (auto item = ench->enchantment) {
+                                    return dynamicForms.find(item->GetFormID()) != dynamicForms.end();
+                                }
+                            }
+                            return false;
+                        } else {
+                            return !weapon->formEnchanting;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
 
 bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                 RE::BGSEquipSlot* a_slot) {
-    if (auto staff = GetEquipedStaff(a_actor, a_slot)) {
-        logger::trace("{} Attempted to replace staff staff {} equiped with spell {}", a_actor->GetName(),
-                      staff->GetName(), a_spell->GetName());
-
-        if (auto extra = GetInventoryExtraList(a_actor, staff)) {
-            if (auto ench = GetEnchantment(a_spell, extra)) {
-                EnchantStaff(a_actor, staff, extra, ench);
-                RefreshEquipedItem(a_actor, staff, extra, a_slot);
-            } else {
-                logger::trace("Enchantment not found for spell {}", a_spell->GetName());
-                return false;
+    if (auto obj = a_actor->GetEquippedEntryData(GetSlot(a_slot))) {
+        if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
+            if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
+                if (auto extra = GetEquipedExtraList(obj)) {
+                    if (auto ench = GetEnchantment(a_spell, extra)) {
+                        EnchantStaff(a_actor, weapon, extra, ench);
+                        RefreshEquipedItem(a_actor, weapon, extra, a_slot);
+                    } else {
+                        return false;
+                    }
+                }
             }
-        }
 
-        return false;
+            return false;
+        }
     }
     return true;
 }
 
-RE::BGSEquipSlot* GetSlot(WornSlot slot) { 
+RE::BGSEquipSlot* GetSlot(WornSlot slot) {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();
-    return dom->GetObject(slot == WornSlot::Left ? RE::DEFAULT_OBJECT::kLeftHandEquip :  RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>();
+    return dom
+        ->GetObject(slot == WornSlot::Left ? RE::DEFAULT_OBJECT::kLeftHandEquip : RE::DEFAULT_OBJECT::kRightHandEquip)
+        ->As<RE::BGSEquipSlot>();
 }
 
 void Core::PostLoad() {

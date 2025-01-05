@@ -1,6 +1,6 @@
 #include "Hooks.h"
 #include "Core.h"
-
+#include "MessageBox.h"
 void Hooks::Install() {
     EquipSpellHook::Install();
     //UpdateHooks::Install();
@@ -10,11 +10,28 @@ void Hooks::Install() {
 
 
 void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
-                                  RE::BGSEquipSlot** a_slot) {
+                                  RE::BGSEquipSlot** a_slot_ptr) {
 
-    if (!a_slot || !a_actor->IsPlayerRef() || Core::ProcessEquippedSpell(a_manager, a_actor, a_spell, *a_slot)) {
-        originalFunction(a_manager, a_actor, a_spell, a_slot);
+    if (a_slot_ptr && a_actor->IsPlayerRef()) {
+        if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr)) {
+            auto slot = *a_slot_ptr;
+            SkyrimScripting::ShowMessageBox("What do you want to do?",
+                {"Equip spell", "Apply Enchantment", "Cancel"}, [a_manager,a_actor,a_spell, slot](int i) {
+                    if (i == 0) {
+                        auto sl = slot;
+                        originalFunction(a_manager, a_actor, a_spell, &sl);
+                    } else if (i == 1) {
+                        Core::ProcessEquippedSpell(a_manager, a_actor, a_spell, slot);
+                    } else {
+                    }    
+                
+            });
+
+            return;
+        }
+        
     }
+    originalFunction(a_manager, a_actor, a_spell, a_slot_ptr);
 }
 
 void Hooks::EquipSpellHook::Install() {
@@ -28,9 +45,10 @@ void Hooks::EquipSpellHook::Install() {
     //AE ID: 38895 AE Offset: 0x47
     SKSE::AllocTrampoline(14 * 3);
     auto& trampoline = SKSE::GetTrampoline();
-    trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7), thunk); // Clicking
-    trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
-    originalFunction = trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunk); // Commonlib
+    originalFunction = trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7),
+                                             thunk);  // Clicking
+    //trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
+   // originalFunction = trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunk); // Commonlib
                                              
 }
 

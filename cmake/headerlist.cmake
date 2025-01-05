@@ -8,4 +8,5 @@ set(headers ${headers}
 	include/Persistence.h
 	include/Serializer.h
 	include/StaffEnchantment.h
+	include/MessageBox.h
 )
