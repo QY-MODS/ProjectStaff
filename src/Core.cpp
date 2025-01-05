@@ -12,30 +12,30 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot)
     }
     return nullptr;
 }
+enum class WornSlot { None, Left, Right };
 
-RE::TESObjectWEAP* GetEquipedStaffLeftHand(RE::Actor* a_actor) {
-    if (auto lefthand_weapon = a_actor->GetEquippedObject(true)) {
-        if (lefthand_weapon->Is(RE::FormType::Weapon)) {
-            auto weapon = skyrim_cast<RE::TESObjectWEAP*>(lefthand_weapon);
-            if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
-                return weapon;
+RE::InventoryEntryData* GetEquipedStaff(RE::Actor* a_actor, WornSlot hand) {
+    if (auto entry = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
+        if (entry->object) {
+            if (entry->object->Is(RE::FormType::Weapon)) {
+                auto weapon = skyrim_cast<RE::TESObjectWEAP*>(entry->object);
+                if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
+                    return entry;
+                }
             }
         }
     }
     return nullptr;
 }
-
-RE::TESObjectWEAP* GetEquipedStaffRightHand(RE::Actor* a_actor) {
-    if (auto lefthand_weapon = a_actor->GetEquippedObject(false)) {
-        if (lefthand_weapon->Is(RE::FormType::Weapon)) {
-            auto weapon = skyrim_cast<RE::TESObjectWEAP*>(lefthand_weapon);
-            if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
-                return weapon;
-            }
+RE::ExtraDataList* GetEquipedExtraList(RE::InventoryEntryData* entry) {
+    if (entry->extraLists && !entry->extraLists->empty()) {
+        if (auto extra = entry->extraLists->front()) {
+            return extra;
         }
     }
     return nullptr;
 }
+
 
 RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* object) {
     auto inv = actor->GetInventory();
@@ -55,17 +55,16 @@ RE::ExtraDataList* GetInventoryExtraList(RE::Actor* actor, RE::TESBoundObject* o
 }
 void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData,
                         RE::BGSEquipSlot* a_slot) {
-    Core::shouldRemoveOnUnequip.store(false);
+    Core::isRegularEquip.store(false);
 
     RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, false, false, false,
                                                          true, nullptr);
     RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, false, false, false,
                                                        true);
 
-    Core::shouldRemoveOnUnequip.store(true);
+    Core::isRegularEquip.store(true);
 }
 
-enum class WornSlot { None, Left, Right };
 Core::StaffEnchantment* GetHand(WornSlot slot) {
     if (slot == WornSlot::Right) {
         return Core::rightHand;
@@ -124,12 +123,8 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
 
 
     if (auto actor = a_actor->AsActorValueOwner()) {
-
    
         auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
-
-
-
 
         auto ench = hand->enchantment;
 
@@ -174,6 +169,11 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
     return true;
 }
 
+RE::BGSEquipSlot* GetSlot(WornSlot slot) { 
+    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
+    return dom->GetObject(slot == WornSlot::Left ? RE::DEFAULT_OBJECT::kLeftHandEquip :  RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>();
+}
+
 void Core::PostLoad() {
     leftHand->CopyEffects();
     rightHand->CopyEffects();
@@ -181,74 +181,57 @@ void Core::PostLoad() {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();
     auto player = RE::PlayerCharacter::GetSingleton();
     if (auto weapon = player->GetEquippedEntryData(true)) {
-        RefreshEquipedItem(player, weapon->object, weapon->extraLists->front(), dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>());
+        RefreshEquipedItem(player, weapon->object, weapon->extraLists->front(), GetSlot(WornSlot::Left));
     }
     if (auto weapon = player->GetEquippedEntryData(false)) {
-        RefreshEquipedItem(player, weapon->object, weapon->extraLists->front(), dom->GetObject(RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>());
+        RefreshEquipedItem(player, weapon->object, weapon->extraLists->front(), GetSlot(WornSlot::Right));
     }
 }
+
+void RemoveStaffEnchantment(WornSlot slot) {
+    auto player = RE::PlayerCharacter::GetSingleton();
+    if (auto entry = GetEquipedStaff(player, slot)) {
+        if (auto extra = GetEquipedExtraList(entry)) {
+            if (extra->HasType<RE::ExtraEnchantment>()) {
+                extra->RemoveByType(RE::ExtraDataType::kEnchantment);
+            }
+        }
+    }
+}
+void AddStaffEnchantment(WornSlot slot) {
+    auto player = RE::PlayerCharacter::GetSingleton();
+    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
+    if (auto entry = GetEquipedStaff(player, slot)) {
+        if (auto weapon = entry->object->As<RE::TESObjectWEAP>()) {
+            if (auto extra = GetEquipedExtraList(entry)) {
+                auto wornSlot = GetWornSlot(extra);
+                auto hand = GetHand(wornSlot);
+                if (hand->Valid()) {
+                    EnchantStaff(player, weapon, extra);
+                    RefreshEquipedItem(player, entry->object, extra, GetSlot(slot));
+                }
+            }
+        }
+    }
+}
+
 
 void Core::EquipEvent() {
-    auto player = RE::PlayerCharacter::GetSingleton();
-
-    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
-
-    if (auto obj = player->GetEquippedEntryData(true)) {
-        if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
-            if (obj->extraLists && !obj->extraLists->empty()) {
-                if (auto extra = obj->extraLists->front()) {
-                    auto wornSlot = GetWornSlot(extra);
-                    auto hand = GetHand(wornSlot);
-                    if (hand->Valid()) {
-                        EnchantStaff(player, weapon, extra);
-                        RefreshEquipedItem(player, obj->object, obj->extraLists->front(),
-                                           dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>());
-                    }
-                }
-            }
-        }
-    }
-    if (auto obj = player->GetEquippedEntryData(false)) {
-        if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
-            if (obj->extraLists && !obj->extraLists->empty()) {
-                if (auto extra = obj->extraLists->front()) {
-                    auto wornSlot = GetWornSlot(extra);
-                    auto hand = GetHand(wornSlot);
-                    if (hand->Valid()) {
-                        EnchantStaff(player, weapon, extra);
-                        RefreshEquipedItem(player, obj->object, obj->extraLists->front(),
-                                           dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>());
-                    }
-                }
-            }
-        }
-    }
-
-}
-
-void Core::UnEquipEvent() {
-    if (!shouldRemoveOnUnequip.load()) {
+    if (!isRegularEquip.load()) {
         return;
     }
 
-    auto player = RE::PlayerCharacter::GetSingleton();
+    AddStaffEnchantment(WornSlot::Left);
+    AddStaffEnchantment(WornSlot::Right);
+}
 
-    if (auto weapon = player->GetEquippedEntryData(true)) {
-        if (weapon->extraLists && !weapon->extraLists->empty()) {
-            if (auto extra = weapon->extraLists->front()) {
-                if (extra->HasType<RE::ExtraEnchantment>()) {
-                    extra->RemoveByType(RE::ExtraDataType::kEnchantment);
-                }
-            }
-        }
+
+void Core::UnEquipEvent() {
+
+    if (!isRegularEquip.load()) {
+        return;
     }
-    if (auto weapon = player->GetEquippedEntryData(false)) {
-        if (weapon->extraLists && !weapon->extraLists->empty()) {
-            if (auto extra = weapon->extraLists->front()) {
-                if (extra->HasType<RE::ExtraEnchantment>()) {
-                    extra->RemoveByType(RE::ExtraDataType::kEnchantment);
-                }
-            }
-        }
-    }
+
+    RemoveStaffEnchantment(WornSlot::Left);
+    RemoveStaffEnchantment(WornSlot::Right);
 }

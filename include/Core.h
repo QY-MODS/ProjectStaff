@@ -2,7 +2,7 @@
 
 
 namespace Core {
-    inline std::atomic<bool> shouldRemoveOnUnequip = false;
+    inline std::atomic<bool> isRegularEquip = false;
 
     struct StaffEnchantment {
         RE::EnchantmentItem* enchantment = nullptr;
@@ -15,6 +15,7 @@ namespace Core {
             }
             return true;
         }
+
 
         void CopyEffects() {
 
