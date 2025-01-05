@@ -11,10 +11,21 @@ namespace Hooks
         static void Install();
     };
 
+    class UpdateHooks {
+    public:
+            static void Install();
+    private:
+        static void thunk();
+        static inline REL::Relocation<decltype(thunk)> originalFunction;
+    };
+
+
     class EquipEvent final : public RE::BSTEventSink<RE::TESEquipEvent> {
     public:
         // This method will be called when the event is triggered
         RE::BSEventNotifyControl ProcessEvent(const RE::TESEquipEvent* a_event,
                                               RE::BSTEventSource<RE::TESEquipEvent>* a_eventSource) override;
+
+        static void Install();
     };
 }

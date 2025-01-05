@@ -3,8 +3,8 @@
 
 void Hooks::Install() {
     EquipSpellHook::Install();
-    RE::ScriptEventSourceHolder::GetSingleton()
-        ->AddEventSink(new EquipEvent());
+    //UpdateHooks::Install();
+    EquipEvent::Install();
 }
 
 
@@ -51,4 +51,20 @@ RE::BSEventNotifyControl Hooks::EquipEvent::ProcessEvent(const RE::TESEquipEvent
 	}
 
     return RE::BSEventNotifyControl::kContinue;
+}
+
+void Hooks::EquipEvent::Install() {
+    RE::ScriptEventSourceHolder::GetSingleton()->AddEventSink(new EquipEvent());
+}
+
+void Hooks::UpdateHooks::Install() {
+    SKSE::AllocTrampoline(14);
+    auto& trampoline = SKSE::GetTrampoline();
+    originalFunction =
+        trampoline.write_call<5>(REL::RelocationID(35565, 36564).address() + REL::Relocate(0x748, 0xc2b), thunk);
+}
+
+void Hooks::UpdateHooks::thunk() { 
+    originalFunction(); 
+    float g_deltaTime = *(float*)REL::RelocationID(523660, 410199).address();
 }

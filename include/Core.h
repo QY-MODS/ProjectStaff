@@ -4,41 +4,8 @@
 namespace Core {
     inline std::atomic<bool> isRegularEquip = false;
 
-    struct StaffEnchantment {
-        RE::EnchantmentItem* enchantment = nullptr;
-        RE::SpellItem* spell = nullptr;
-
-        bool Valid() {
-            if (!enchantment || !spell) {
-                logger::trace("did not copy");
-                return false;
-            }
-            return true;
-        }
 
 
-        void CopyEffects() {
-
-            if (!Valid()) {
-                return;
-            }
-            logger::trace("copied");
-
-            enchantment->effects.clear();
-            enchantment->avEffectSetting = nullptr;
-            enchantment->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
-
-            for (auto effect : spell->effects) {
-                enchantment->effects.push_back(effect);
-            }
-            enchantment->data.castingType = spell->GetCastingType();
-            enchantment->data.delivery = spell->GetDelivery();
-        }
-
-    };
-
-    inline StaffEnchantment* leftHand = new StaffEnchantment();
-    inline StaffEnchantment* rightHand = new StaffEnchantment();
 
     bool ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                               RE::BGSEquipSlot* a_slot);

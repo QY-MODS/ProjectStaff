@@ -4,4 +4,5 @@ set(sources ${sources}
 	src/Hooks.cpp
 	src/Persistence.cpp
 	src/Core.cpp
+	src/StaffEnchantment.cpp
 )

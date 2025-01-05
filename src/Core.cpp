@@ -1,4 +1,5 @@
 #include "Core.h"
+#include "StaffEnchantment.h"
 
 RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot) {
     if (a_actor && a_slot) {
@@ -65,11 +66,11 @@ void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::Ex
     Core::isRegularEquip.store(true);
 }
 
-Core::StaffEnchantment* GetHand(WornSlot slot) {
+StaffEnchantment* GetHand(WornSlot slot) {
     if (slot == WornSlot::Right) {
-        return Core::rightHand;
+        return rightHand;
     }
-    return Core::leftHand;
+    return leftHand;
 }
 RE::ActorValue GetChargeValue(WornSlot slot) {
     if (slot == WornSlot::Right) {
@@ -138,12 +139,10 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
             enchantment_fake->enchantment = ench;
 
             extra->Add(enchantment_fake);
-
-
-            if (wornSlot != WornSlot::None) {
-                auto actorValue = GetChargeValue(wornSlot);
-                actor->ModActorValue(actorValue, mana);
-            }
+        }
+        if (wornSlot != WornSlot::None) {
+            auto actorValue = GetChargeValue(wornSlot);
+            actor->ModActorValue(actorValue, mana);
         }
     }
 }
@@ -235,3 +234,4 @@ void Core::UnEquipEvent() {
     RemoveStaffEnchantment(WornSlot::Left);
     RemoveStaffEnchantment(WornSlot::Right);
 }
+

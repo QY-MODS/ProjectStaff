@@ -7,4 +7,5 @@ set(headers ${headers}
 	include/Core.h
 	include/Persistence.h
 	include/Serializer.h
+	include/StaffEnchantment.h
 )
