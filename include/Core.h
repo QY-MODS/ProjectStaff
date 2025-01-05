@@ -9,8 +9,16 @@ namespace Core {
         RE::SpellItem* spell = nullptr;
 
         void CopyEffects() {
+
+            if (!enchantment || !spell) {
+                logger::trace("did not copy");
+                return;
+            }
+            logger::trace("copied");
+
             enchantment->effects.clear();
             enchantment->avEffectSetting = nullptr;
+            enchantment->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
 
             for (auto effect : spell->effects) {
                 enchantment->effects.push_back(effect);

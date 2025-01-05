@@ -47,6 +47,12 @@ public:
     }
 
     inline void WriteForm(RE::TESForm* form) {
+
+        if (!form) {
+            Write<char>(0);
+            return;
+        }
+
         auto formId = form->GetFormID();
 
         if (formId == 0) {
@@ -57,7 +63,11 @@ public:
 
         auto modId = (formId >> 24) & 0xff;
 
-        if (modId == 0xfe) {
+        if (modId == 0xff) {
+            Write<char>(2);
+            Write<uint32_t>(formId);
+        }
+        else if (modId == 0xfe) {
             auto lightId = (formId >> 12) & 0xFFF;
             auto file = dataHandler->LookupLoadedLightModByIndex(lightId);
             if (file) {
@@ -87,17 +97,41 @@ public:
         char fileRef = Read<char>();
 
         if (fileRef == 0) {
+            logger::trace("nullref");
             return 0;
         }
 
         if (fileRef == 1) {
+            logger::trace("existent ref");
             auto fileName = ReadString();
             uint32_t localId = Read<uint32_t>();
             return FormSerializer::GetForm(fileName, localId);
         }
+        else if (fileRef == 2) {
+            logger::trace("dynamic form");
+            uint32_t id = Read<uint32_t>();
+            return RE::TESForm::LookupByID(id);
+        } 
 
         return 0;
     }
+
+    template <class T>
+    T* ReadForm() {
+        auto form = ReadForm();
+        if (!form) {
+            logger::trace("nullptr");
+            return nullptr;
+        }
+        auto result = form->As<T>();
+        if (!result) {
+            logger::trace("bad type:{}", form->GetName());
+            return nullptr;
+        }    
+
+        return result;
+    }
+
 
 private:
 };

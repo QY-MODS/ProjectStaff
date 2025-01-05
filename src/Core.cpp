@@ -105,8 +105,8 @@ RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* ext
     auto factory = RE::IFormFactory::GetConcreteFormFactoryByType<RE::EnchantmentItem>();
     if (auto ench = factory->Create()) {
         hand->enchantment = ench;
-        ench->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
         hand->CopyEffects();
+        ench->AddChange(1);
         // ench->data.costOverride = 0;
         // ench->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
         return ench;
@@ -167,7 +167,19 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
     return true;
 }
 
-void Core::PostLoad() {}
+void Core::PostLoad() {
+    leftHand->CopyEffects();
+    rightHand->CopyEffects();
+
+    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
+    auto player = RE::PlayerCharacter::GetSingleton();
+    if (auto weapon = player->GetEquippedEntryData(true)) {
+        RefreshEquipedItem(player, weapon->object, weapon->extraLists->front(), dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>());
+    }
+    if (auto weapon = player->GetEquippedEntryData(false)) {
+        RefreshEquipedItem(player, weapon->object, weapon->extraLists->front(), dom->GetObject(RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>());
+    }
+}
 
 void Core::EquipEvent() {}
 
