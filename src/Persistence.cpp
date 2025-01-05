@@ -19,6 +19,7 @@ static void SaveCallback(SKSE::SerializationInterface* a_intfc) {
             serializer.Write<float>(value->duartionMult);
             serializer.Write<float>(value->areaMult);
             serializer.Write<float>(value->costMult);
+            serializer.Write<float>(value->chargingTimeMult);
             serializer.Write<int32_t>(value->costOverride);
         }
 
@@ -54,6 +55,7 @@ static void LoadCallback(SKSE::SerializationInterface* a_intfc) {
                 se->duartionMult = serializer.Read<float>();
                 se->areaMult = serializer.Read<float>();
                 se->costMult = serializer.Read<float>();
+                se->chargingTimeMult = serializer.Read<float>();
                 se->costOverride = serializer.Read<int32_t>();
 
                 se->CopyEffects();

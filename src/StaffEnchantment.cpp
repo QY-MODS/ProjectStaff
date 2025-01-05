@@ -42,7 +42,7 @@ void StaffEnchantment::CopyEffects() {
         enchantment->data.costOverride = 0;
         enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
     }
-
+    enchantment->data.chargeTime = spell->GetChargeTime() * chargingTimeMult;
     enchantment->data.castingType = spell->GetCastingType();
     enchantment->data.delivery = spell->GetDelivery();
 }
