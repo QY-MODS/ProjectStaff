@@ -10,6 +10,7 @@ struct ValueModifier {
 };
 
 struct ValueModifierGroup {
+    RE::ActorValue actorValue;
     ValueModifier* skillValueModifier;
     ValueModifier* otherValueModifier;
 };
@@ -27,13 +28,13 @@ enum StaffType {
 
 
 inline std::map<StaffType, ValueModifierGroup> modifierGroups = {
-    {StaffType::Alteration, ValueModifierGroup{new ValueModifier{1,1,1,0.8,1,-1}, new ValueModifier{}}},
-    {StaffType::Conjuration, ValueModifierGroup{new ValueModifier{1, 1, 1.2, 1, 1, -1}, new ValueModifier{}}},
-    {StaffType::Destruction, ValueModifierGroup{new ValueModifier{1.2, 1, 1, 1, 1, -1}, new ValueModifier{}}},
-    {StaffType::Restoration, ValueModifierGroup{new ValueModifier{1.2, 1, 1, 1, 1, -1}, new ValueModifier{}}},
-    {StaffType::Illusion, ValueModifierGroup{new ValueModifier{1, 1, 1, 0.8, 1, -1}, new ValueModifier{}}},
-    {StaffType::Forsworn, ValueModifierGroup{new ValueModifier{0.1, 1, 1, 0.0, 1, -1}, nullptr}},
-    {StaffType::Falmer, ValueModifierGroup{new ValueModifier{0.9, 1, 1, 1.0, 0.5, -1}, nullptr}}
+    {StaffType::Alteration, ValueModifierGroup{RE::ActorValue::kAlteration, new ValueModifier{1,1,1,0.8,1,-1}, new ValueModifier{}}},
+    {StaffType::Conjuration, ValueModifierGroup{RE::ActorValue::kConjuration,new ValueModifier{1, 1, 1.2, 1, 1, -1}, new ValueModifier{}}},
+    {StaffType::Destruction, ValueModifierGroup{RE::ActorValue::kDestruction,new ValueModifier{1.2, 1, 1, 1, 1, -1}, new ValueModifier{}}},
+    {StaffType::Restoration, ValueModifierGroup{RE::ActorValue::kRestoration,new ValueModifier{1.2, 1, 1, 1, 1, -1}, new ValueModifier{}}},
+    {StaffType::Illusion, ValueModifierGroup{RE::ActorValue::kIllusion,new ValueModifier{1, 1, 1, 0.8, 1, -1}, new ValueModifier{}}},
+    {StaffType::Forsworn, ValueModifierGroup{RE::ActorValue::kNone,new ValueModifier{0.1, 1, 1, 0.0, 1, -1}, nullptr}},
+    {StaffType::Falmer, ValueModifierGroup{RE::ActorValue::kNone,new ValueModifier{0.9, 1, 1, 1.0, 0.5, -1}, nullptr}}
 };
 
 class StaffEnchantment {

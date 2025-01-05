@@ -45,7 +45,7 @@ void StaffEnchantment::CopyEffects() {
 
     auto vm = !mod.otherValueModifier ? 
         mod.skillValueModifier : 
-        spell->GetAssociatedSkill() == GetActorValue(staffType) ?
+        spell->GetAssociatedSkill() == mod.actorValue?
         mod.skillValueModifier : 
         mod.otherValueModifier;
 
