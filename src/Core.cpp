@@ -89,16 +89,6 @@ WornSlot GetWornSlot(RE::ExtraDataList* a_extraData) {
     return WornSlot::None;
 }
 
-void CopyEffects(RE::SpellItem* spell, RE::EnchantmentItem* ench) {
-    ench->effects.clear();
-    ench->avEffectSetting = nullptr;
-
-    for (auto effect : spell->effects) {
-        ench->effects.push_back(effect);
-    }
-    ench->data.castingType = spell->GetCastingType();
-    ench->data.delivery = spell->GetDelivery();
-}
 
 RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra) {
 
@@ -108,7 +98,7 @@ RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* ext
     hand->spell = spell;
 
     if (hand->enchantment) {
-        CopyEffects(spell, hand->enchantment);
+        hand->CopyEffects();
         return hand->enchantment;
     }
     
@@ -116,7 +106,7 @@ RE::EnchantmentItem* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* ext
     if (auto ench = factory->Create()) {
         hand->enchantment = ench;
         ench->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
-        CopyEffects(spell, ench);
+        hand->CopyEffects();
         // ench->data.costOverride = 0;
         // ench->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
         return ench;

@@ -7,6 +7,18 @@ namespace Core {
     struct StaffEnchantment {
         RE::EnchantmentItem* enchantment = nullptr;
         RE::SpellItem* spell = nullptr;
+
+        void CopyEffects() {
+            enchantment->effects.clear();
+            enchantment->avEffectSetting = nullptr;
+
+            for (auto effect : spell->effects) {
+                enchantment->effects.push_back(effect);
+            }
+            enchantment->data.castingType = spell->GetCastingType();
+            enchantment->data.delivery = spell->GetDelivery();
+        }
+
     };
 
     inline StaffEnchantment* leftHand = new StaffEnchantment();
