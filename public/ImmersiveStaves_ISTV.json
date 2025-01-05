@@ -1,0 +1,100 @@
+[
+  {
+    "Keyword": "IS_ArcaneAlteration",
+    "Alteration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 200,
+      "ChargingTimePercentage": 90,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 60,
+      "AreaPercentage": 90,
+      "DurationPercentage": 60,
+      "CostPercentage": 240,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_ArcaneConjuration",
+    "Conjuration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 140,
+      "CostPercentage": 200,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 60,
+      "AreaPercentage": 90,
+      "DurationPercentage": 60,
+      "CostPercentage": 240,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_ArcaneDestruction",
+    "Destruction": {
+      "MagnitudePercentage": 140,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 200,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 60,
+      "AreaPercentage": 90,
+      "DurationPercentage": 60,
+      "CostPercentage": 240,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_ArcaneIllusion",
+    "Illusion": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 110,
+      "DurationPercentage": 100,
+      "CostPercentage": 180,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 60,
+      "AreaPercentage": 90,
+      "DurationPercentage": 60,
+      "CostPercentage": 240,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_ArcaneFalmer",
+    "Default": {
+      "MagnitudePercentage": 110,
+      "AreaPercentage": 110,
+      "DurationPercentage": 110,
+      "CostPercentage": 200,
+      "ChargingTimePercentage": 90,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_ArcaneForsworn",
+    "Default": {
+      "MagnitudePercentage": 30,
+      "AreaPercentage": 30,
+      "DurationPercentage": 30,
+      "CostPercentage": 10,
+      "ChargingTimePercentage": 30,
+      "CostOverride": -1
+    }
+  }
+]

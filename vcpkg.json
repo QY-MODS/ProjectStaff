@@ -11,8 +11,9 @@
     "rapidcsv",
     "directxmath",
     "directxtk",
-    "boost-stl-interfaces",
-    "clib-util"
+    "clib-util",
+    "nlohmann-json"
+
   ],
   "overrides": [
     {

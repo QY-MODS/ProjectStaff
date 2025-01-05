@@ -5,4 +5,5 @@ set(sources ${sources}
 	src/Persistence.cpp
 	src/Core.cpp
 	src/StaffEnchantment.cpp
+	src/Config.cpp
 )

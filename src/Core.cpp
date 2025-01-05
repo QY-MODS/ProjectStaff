@@ -18,32 +18,6 @@ enum class WornSlot { None, Left, Right };
 
 
 
-
-StaffType GetStaffType(RE::TESObjectWEAP* weapon) {
-    if (weapon->HasKeywordByEditorID("IS_ArcaneAlteration")) {
-        return StaffType::Alteration;
-    }
-    if (weapon->HasKeywordByEditorID("IS_ArcaneConjuration")) {
-        return StaffType::Conjuration;
-    }
-    if (weapon->HasKeywordByEditorID("IS_ArcaneDestruction")) {
-        return StaffType::Destruction;
-    }
-    if (weapon->HasKeywordByEditorID("IS_ArcaneIllusion")) {
-        return StaffType::Illusion;
-    }
-    if (weapon->HasKeywordByEditorID("IS_ArcaneRestoration")) {
-        return StaffType::Restoration;
-    }
-    if (weapon->HasKeywordByEditorID("IS_ArcaneFalmer")) {
-        return StaffType::Falmer;
-    }
-    if (weapon->HasKeywordByEditorID("IS_ArcaneForsworn")) {
-        return StaffType::Forsworn;
-    }
-    return StaffType::None;
-}
-
 bool GetSlot(RE::BGSEquipSlot* slot) {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();
     auto left = dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip);
@@ -112,9 +86,8 @@ WornSlot GetWornSlot(RE::ExtraDataList* a_extraData) {
 
 StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra, RE::TESObjectWEAP* weap) {
 
-    auto av = GetStaffType(weap);
-
-    if (av == StaffType::None) {
+    std::string keyword;
+    if (!StaffEnchantment::GetKeyword(weap, keyword)) {
         return nullptr;
     }
 
@@ -127,7 +100,7 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra,
             auto it = dynamicForms.find(e->enchantment->GetFormID());
             if (it != dynamicForms.end()) {
                 auto df = it->second;
-                df->staffType = av;
+                df->keyword = keyword;
                 df->spell = spell;
                 df->CopyEffects();
                 return df;
@@ -138,7 +111,7 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra,
         if (auto ench = factory->Create()) {
             ench->AddChange(1);
             auto df = new StaffEnchantment(ench, spell);
-            df->staffType = av;
+            df->keyword = keyword;
             df->CopyEffects();
             dynamicForms[ench->GetFormID()] = df;
             return df;
@@ -211,7 +184,7 @@ bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot
         if (obj->object) {
             if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
                 if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
-                    if (GetStaffType(weapon) != StaffType::None) {
+                    if (StaffEnchantment::HasKeyword(weapon)) {
                         if (auto list = GetEquipedExtraList(obj)) {
                             if (list->HasType<RE::ExtraEnchantment>()) {
                                 if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {

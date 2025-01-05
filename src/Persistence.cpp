@@ -17,7 +17,7 @@ static void SaveCallback(SKSE::SerializationInterface* a_intfc) {
         for (auto& [key, value] : dynamicForms) {
             serializer.WriteForm(value->enchantment);
             serializer.WriteForm(value->spell);
-            serializer.Write<int32_t>(value->staffType);
+            serializer.WriteString(value->keyword.c_str());
         }
 
     }
@@ -47,7 +47,7 @@ static void LoadCallback(SKSE::SerializationInterface* a_intfc) {
                 auto enchantment = serializer.ReadForm<RE::EnchantmentItem>();
                 auto spell = serializer.ReadForm<RE::SpellItem>();
                 auto se = new StaffEnchantment(enchantment, spell);
-                se->staffType= static_cast<StaffType>(serializer.Read<int32_t>());
+                se->keyword= serializer.ReadString();
                 se->CopyEffects();
                 dynamicForms[enchantment->GetFormID()] = se;
             }
@@ -63,3 +63,5 @@ void Persistence::Install() {
     serialization->SetSaveCallback(SaveCallback);
     serialization->SetLoadCallback(LoadCallback);
 }
+
+

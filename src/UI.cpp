@@ -1,21 +1,50 @@
 #include "UI.h"
+#include "StaffEnchantment.h"
 
 void UI::Register() {
+#ifndef NDEBUG
 
     if (!SKSEMenuFramework::IsInstalled()) {
         return;
     }
     SKSEMenuFramework::SetSection("SKSE Menu Framework Compiled Example 4");
     SKSEMenuFramework::AddSectionItem("Add Item", Example1::Render);
+
+#endif
 }
+#ifndef NDEBUG
+
+std::map<RE::ActorValue, std::string> AVTranslation = {
+        {RE::ActorValue::kAlteration,"Alteration"},
+        {RE::ActorValue::kConjuration,"Conjuration"},
+        {RE::ActorValue::kDestruction,"Destruction"},
+        {RE::ActorValue::kIllusion,"Illusion"},
+		{RE::ActorValue::kRestoration,"Restoration"},
+		{RE::ActorValue::kNone,"Default"}
+};
+#endif
 
 
 void __stdcall UI::Example1::Render() {
-    if (ImGui::Button("JUST DO IT")) {
-    
-        auto player = RE::PlayerCharacter::GetSingleton();
+    for (auto [key, value] : Groups) {
+        ImGui::Text(std::format("Keyword: {}", key).c_str());
+        for (auto [key2, value2] : value) {
 
+            auto it = AVTranslation.find(key2);
+            std::string text;
+            if (it != AVTranslation.end()) {
+                text = it->second;
+            } else {
+                text = "Unknown";
+            }
 
-
+            ImGui::Text(std::format("    ActorValue: {}", text).c_str());
+            ImGui::Text(std::format("        areaPercentage: {}", value2.areaPercentage).c_str());
+            ImGui::Text(std::format("        chargingTimePercentage: {}", value2.chargingTimePercentage).c_str());
+            ImGui::Text(std::format("        costPercentage: {}", value2.costPercentage).c_str());
+            ImGui::Text(std::format("        durationPercentage: {}", value2.durationPercentage).c_str());
+            ImGui::Text(std::format("        magnitudePercentage: {}", value2.magnitudePercentage).c_str());
+            ImGui::Text(std::format("        costOverride: {}", value2.costOverride).c_str());
+        }
     }
 }

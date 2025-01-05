@@ -9,4 +9,5 @@ set(headers ${headers}
 	include/Serializer.h
 	include/StaffEnchantment.h
 	include/MessageBox.h
+	include/Config.h
 )
