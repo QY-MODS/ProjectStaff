@@ -8,7 +8,7 @@ public:
     RE::EnchantmentItem* enchantment = nullptr;
     RE::SpellItem* spell = nullptr;
 
-    float magnitudeMult = 100;
+    float magnitudeMult = 1;
     float areaMult = 1;
     float duartionMult = 1;
     float costMult = 1;
