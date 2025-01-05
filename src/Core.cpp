@@ -16,23 +16,32 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot)
 }
 enum class WornSlot { None, Left, Right };
 
-RE::ActorValue GetActorValue(RE::TESObjectWEAP* weapon) {
-    if (weapon->HasKeywordByEditorID("IS_Alteration")) {
-        return RE::ActorValue::kAlteration;
+
+
+
+StaffType GetStaffType(RE::TESObjectWEAP* weapon) {
+    if (weapon->HasKeywordByEditorID("IS_ArcaneAlteration")) {
+        return StaffType::Alteration;
     }
-    if (weapon->HasKeywordByEditorID("IS_Conjuration")) {
-        return RE::ActorValue::kConjuration;
+    if (weapon->HasKeywordByEditorID("IS_ArcaneConjuration")) {
+        return StaffType::Conjuration;
     }
-    if (weapon->HasKeywordByEditorID("IS_Destruction")) {
-        return RE::ActorValue::kDestruction;
+    if (weapon->HasKeywordByEditorID("IS_ArcaneDestruction")) {
+        return StaffType::Destruction;
     }
-    if (weapon->HasKeywordByEditorID("IS_Illusion")) {
-        return RE::ActorValue::kIllusion;
+    if (weapon->HasKeywordByEditorID("IS_ArcaneIllusion")) {
+        return StaffType::Illusion;
     }
-    if (weapon->HasKeywordByEditorID("IS_Restoration")) {
-        return RE::ActorValue::kRestoration;
+    if (weapon->HasKeywordByEditorID("IS_ArcaneRestoration")) {
+        return StaffType::Restoration;
     }
-    return RE::ActorValue::kNone;
+    if (weapon->HasKeywordByEditorID("IS_ArcaneFalmer")) {
+        return StaffType::Falmer;
+    }
+    if (weapon->HasKeywordByEditorID("IS_ArcaneForsworn")) {
+        return StaffType::Forsworn;
+    }
+    return StaffType::None;
 }
 
 bool GetSlot(RE::BGSEquipSlot* slot) {
@@ -103,9 +112,9 @@ WornSlot GetWornSlot(RE::ExtraDataList* a_extraData) {
 
 StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra, RE::TESObjectWEAP* weap) {
 
-    auto av = GetActorValue(weap);
+    auto av = GetStaffType(weap);
 
-    if (av == RE::ActorValue::kNone) {
+    if (av == StaffType::None) {
         return nullptr;
     }
 
@@ -118,7 +127,7 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra,
             auto it = dynamicForms.find(e->enchantment->GetFormID());
             if (it != dynamicForms.end()) {
                 auto df = it->second;
-                df->associatedSkill = av;
+                df->staffType = av;
                 df->spell = spell;
                 df->CopyEffects();
                 return df;
@@ -129,8 +138,7 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra,
         if (auto ench = factory->Create()) {
             ench->AddChange(1);
             auto df = new StaffEnchantment(ench, spell);
-            df->associatedSkill = av;
-            df->skillValueModifier.magnitudeMult = 2;
+            df->staffType = av;
             df->CopyEffects();
             dynamicForms[ench->GetFormID()] = df;
             return df;
@@ -203,7 +211,7 @@ bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot
         if (obj->object) {
             if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
                 if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
-                    if (GetActorValue(weapon) != RE::ActorValue::kNone) {
+                    if (GetStaffType(weapon) != StaffType::None) {
                         if (auto list = GetEquipedExtraList(obj)) {
                             if (list->HasType<RE::ExtraEnchantment>()) {
                                 if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {
