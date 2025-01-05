@@ -13,7 +13,8 @@ public:
     float duartionMult = 1;
     float costMult = 1;
     float chargingTimeMult = 1;
-    int32_t costOverride = -1;
+    int32_t costOverride = 1;
+    int32_t chargeOverride = 10;
 
     ~StaffEnchantment() {}
     StaffEnchantment(RE::EnchantmentItem* enchantment, RE::SpellItem* spell):enchantment(enchantment), spell(spell) {}

@@ -39,7 +39,7 @@ void StaffEnchantment::CopyEffects() {
     }
 
     if (costOverride > 0) {
-        enchantment->data.costOverride = 0;
+        enchantment->data.costOverride = costOverride;
         enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
     }
     enchantment->data.chargeTime = spell->GetChargeTime() * chargingTimeMult;
