@@ -6,7 +6,7 @@ struct ValueModifier {
     float duartionMult = 1;
     float costMult = 1;
     float chargingTimeMult = 1;
-    int32_t costOverride = 1;
+    int32_t costOverride = 0;
     int32_t chargeOverride = 10;
 };
 

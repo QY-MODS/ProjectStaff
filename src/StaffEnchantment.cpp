@@ -39,7 +39,7 @@ void StaffEnchantment::CopyEffects() {
     }
 
 
-    if (vm.costOverride > 0) {
+    if (vm.costOverride >= 0) {
         enchantment->data.costOverride = vm.costOverride;
         enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
     }

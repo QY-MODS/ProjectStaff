@@ -16,6 +16,25 @@ RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot)
 }
 enum class WornSlot { None, Left, Right };
 
+RE::ActorValue GetActorValue(RE::TESObjectWEAP* weapon) {
+    if (weapon->HasKeywordByEditorID("IS_Alteration")) {
+        return RE::ActorValue::kAlteration;
+    }
+    if (weapon->HasKeywordByEditorID("IS_Conjuration")) {
+        return RE::ActorValue::kConjuration;
+    }
+    if (weapon->HasKeywordByEditorID("IS_Destruction")) {
+        return RE::ActorValue::kDestruction;
+    }
+    if (weapon->HasKeywordByEditorID("IS_Illusion")) {
+        return RE::ActorValue::kIllusion;
+    }
+    if (weapon->HasKeywordByEditorID("IS_Restoration")) {
+        return RE::ActorValue::kRestoration;
+    }
+    return RE::ActorValue::kNone;
+}
+
 bool GetSlot(RE::BGSEquipSlot* slot) {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();
     auto left = dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip);
@@ -59,12 +78,10 @@ RE::TESForm* GetEquippedObjectInSlot(const RE::Actor* actor, const RE::BGSEquipS
 
 void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData,
                         RE::BGSEquipSlot* a_slot) {
-
-        RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, true, false, false,
-                                                             true, nullptr);
-        RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false,
-                                                           false, true);
-
+    RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, true, false, false,
+                                                         true, nullptr);
+    RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false, false,
+                                                       true);
 }
 
 RE::ActorValue GetChargeValue(WornSlot slot) {
@@ -84,7 +101,14 @@ WornSlot GetWornSlot(RE::ExtraDataList* a_extraData) {
     return WornSlot::None;
 }
 
-StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra) {
+StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra, RE::TESObjectWEAP* weap) {
+
+    auto av = GetActorValue(weap);
+
+    if (av == RE::ActorValue::kNone) {
+        return nullptr;
+    }
+
     auto wornSlot = GetWornSlot(extra);
 
     if (extra->HasType<RE::ExtraEnchantment>()) {
@@ -94,6 +118,7 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra)
             auto it = dynamicForms.find(e->enchantment->GetFormID());
             if (it != dynamicForms.end()) {
                 auto df = it->second;
+                df->associatedSkill = av;
                 df->spell = spell;
                 df->CopyEffects();
                 return df;
@@ -104,6 +129,8 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra)
         if (auto ench = factory->Create()) {
             ench->AddChange(1);
             auto df = new StaffEnchantment(ench, spell);
+            df->associatedSkill = av;
+            df->skillValueModifier.magnitudeMult = 2;
             df->CopyEffects();
             dynamicForms[ench->GetFormID()] = df;
             return df;
@@ -139,6 +166,8 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
 
         auto ench = se->enchantment;
 
+        staff->amountofEnchantment = 0;
+
         if (extra->HasType<RE::ExtraEnchantment>()) {
             auto e = extra->GetByType<RE::ExtraEnchantment>();
             e->enchantment = ench;
@@ -148,8 +177,6 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
             enchantment_fake->charge = mana;
             enchantment_fake->enchantment = ench;
 
-            se->skillValueModifier.magnitudeMult = 2;
-            se->associatedSkill = RE::ActorValue::kRestoration;
 
             extra->Add(enchantment_fake);
 
@@ -176,16 +203,18 @@ bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot
         if (obj->object) {
             if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
                 if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
-                    if (auto list = GetEquipedExtraList(obj)) {
-                        if (list->HasType<RE::ExtraEnchantment>()) {
-                            if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {
-                                if (auto item = ench->enchantment) {
-                                    return dynamicForms.find(item->GetFormID()) != dynamicForms.end();
+                    if (GetActorValue(weapon) != RE::ActorValue::kNone) {
+                        if (auto list = GetEquipedExtraList(obj)) {
+                            if (list->HasType<RE::ExtraEnchantment>()) {
+                                if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {
+                                    if (auto item = ench->enchantment) {
+                                        return dynamicForms.find(item->GetFormID()) != dynamicForms.end();
+                                    }
                                 }
+                                return false;
+                            } else {
+                                return !weapon->formEnchanting;
                             }
-                            return false;
-                        } else {
-                            return !weapon->formEnchanting;
                         }
                     }
                 }
@@ -201,7 +230,7 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
         if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
             if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
                 if (auto extra = GetEquipedExtraList(obj)) {
-                    if (auto ench = GetEnchantment(a_spell, extra)) {
+                    if (auto ench = GetEnchantment(a_spell, extra, weapon)) {
                         EnchantStaff(a_actor, weapon, extra, ench);
                         RefreshEquipedItem(a_actor, weapon, extra, a_slot);
                     } else {
