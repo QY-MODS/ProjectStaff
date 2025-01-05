@@ -121,6 +121,23 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra)
     return nullptr;
 }
 
+class PrefixRemover {
+    std::string prefix;
+public:
+    PrefixRemover(std::string prefix): prefix(prefix) {}
+    std::string Remove(const std::string& input) {
+        return input.substr(prefix.length());
+    }
+    bool Has(const std::string& input) {
+        if (input.rfind(prefix, 0) == 0) {
+            return true;
+        }
+        return false;
+    }
+};
+
+
+
 void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataList* extra, StaffEnchantment* se) {
     auto wornSlot = GetWornSlot(extra);
 
@@ -149,6 +166,14 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
                 auto actorValue = GetChargeValue(wornSlot);
                 actor->SetBaseActorValue(actorValue, mana);
                 actor->SetActorValue(actorValue, mana);
+            }
+            if (!extra->HasType<RE::ExtraTextDisplayData>()) {
+                auto remover = PrefixRemover("Unenchanted ");
+                if (remover.Has(staff->GetName())) {
+                    auto xText = RE::BSExtraData::Create<RE::ExtraTextDisplayData>();
+                    xText->SetName(remover.Remove(staff->GetName()).c_str());
+                    extra->Add(xText);
+                }
             }
         }
 
