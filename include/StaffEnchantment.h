@@ -1,13 +1,6 @@
 #pragma once
 
-
-
-class StaffEnchantment {
-public:
-
-    RE::EnchantmentItem* enchantment = nullptr;
-    RE::SpellItem* spell = nullptr;
-
+struct ValueModifier {
     float magnitudeMult = 1;
     float areaMult = 1;
     float duartionMult = 1;
@@ -15,6 +8,18 @@ public:
     float chargingTimeMult = 1;
     int32_t costOverride = 1;
     int32_t chargeOverride = 10;
+};
+
+class StaffEnchantment {
+public:
+
+    RE::EnchantmentItem* enchantment = nullptr;
+    RE::SpellItem* spell = nullptr;
+
+    RE::ActorValue associatedSkill = RE::ActorValue::kDestruction;
+
+    ValueModifier skillValueModifier;
+    ValueModifier otherValueModifier;
 
     ~StaffEnchantment() {}
     StaffEnchantment(RE::EnchantmentItem* enchantment, RE::SpellItem* spell):enchantment(enchantment), spell(spell) {}

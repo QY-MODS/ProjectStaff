@@ -135,6 +135,7 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
 
     if (auto actor = a_actor->AsActorValueOwner()) {
         auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
+        logger::trace("mana: {}", mana);
 
         auto ench = se->enchantment;
 
@@ -147,13 +148,17 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
             enchantment_fake->charge = mana;
             enchantment_fake->enchantment = ench;
 
+            se->skillValueModifier.magnitudeMult = 2;
+            se->associatedSkill = RE::ActorValue::kRestoration;
+
             extra->Add(enchantment_fake);
 
             if (wornSlot != WornSlot::None) {
                 auto actorValue = GetChargeValue(wornSlot);
-                actor->SetBaseActorValue(actorValue, mana);
                 actor->SetActorValue(actorValue, mana);
+                actor->SetBaseActorValue(actorValue, mana);
             }
+
             if (!extra->HasType<RE::ExtraTextDisplayData>()) {
                 auto remover = PrefixRemover("Unenchanted ");
                 if (remover.Has(staff->GetName())) {

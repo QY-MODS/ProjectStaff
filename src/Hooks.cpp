@@ -4,7 +4,7 @@
 void Hooks::Install() {
     EquipSpellHook::Install();
     //UpdateHooks::Install();
-    EquipEvent::Install();
+    //EquipEvent::Install();
 }
 
 
