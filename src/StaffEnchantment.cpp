@@ -90,5 +90,6 @@ void StaffEnchantment::CopyEffects() {
     enchantment->data.chargeTime = spell->GetChargeTime() * vm.chargingTimePercentage / 100;
     enchantment->data.castingType = spell->GetCastingType();
     enchantment->data.delivery = spell->GetDelivery();
-    
+
+    costActorValue = vm.costActorValue;
 }

@@ -179,6 +179,16 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
     }
 }
 
+RE::ActorValue Core::ProcessActorValueCost(RE::MagicItem* a1) { 
+    if (a1) {
+        auto it = dynamicForms.find(a1->GetFormID());
+        if (it != dynamicForms.end()) {
+            return it->second->costActorValue;
+        }
+    }
+    return RE::ActorValue::kNone;
+}
+
 bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
 
     //if (a_spell->IsTwoHanded()) {

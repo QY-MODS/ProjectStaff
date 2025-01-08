@@ -7,8 +7,8 @@ struct ValueModifier {
     float costPercentage = 100;
     float chargingTimePercentage = 100;
     int32_t costOverride = -1;
+    RE::ActorValue costActorValue = RE::ActorValue::kMagicka;
 };
-
 
 
 inline std::map<std::string, std::map<RE::ActorValue, ValueModifier>> Groups;
@@ -24,7 +24,10 @@ public:
 
     RE::EnchantmentItem* enchantment = nullptr;
     RE::SpellItem* spell = nullptr;
+    RE::ActorValue costActorValue = RE::ActorValue::kNone;
+
     std::string keyword;
+
     ~StaffEnchantment() {}
     StaffEnchantment(RE::EnchantmentItem* enchantment, RE::SpellItem* spell):enchantment(enchantment), spell(spell) {}
 

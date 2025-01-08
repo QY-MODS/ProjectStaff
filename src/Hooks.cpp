@@ -3,9 +3,10 @@
 #include "MessageBox.h"
 void Hooks::Install() {
     EquipSpellHook::Install();
+    GetActorValueForCost::Install();
     //UpdateHooks::Install();
     //EquipEvent::Install();
-    CastSpellHook::Install();
+   // CastSpellHook::Install();
 }
 
 
@@ -86,16 +87,18 @@ void Hooks::UpdateHooks::thunk() {
     float g_deltaTime = *(float*)REL::RelocationID(523660, 410199).address();
 }
 
-void Hooks::CastSpellHook::Install() {
-    //SE ID: 33663 SE Offset: 0x27 (Heuristic)
-    //AE ID: 34443 AE Offset: 0x27
+
+void Hooks::GetActorValueForCost::Install() {
     SKSE::AllocTrampoline(14);
     auto& trampoline = SKSE::GetTrampoline();
     originalFunction =
-        trampoline.write_branch<5>(REL::RelocationID(33663, 34443).address() + REL::Relocate(0x27, 0x27), thunk);
+        trampoline.write_call<5>(REL::RelocationID(33362, 34143).address() + REL::Relocate(0x151, 0x151), thunk);
 }
 
-void Hooks::CastSpellHook::thunk(RE::MagicCaster* caster, uint64_t a2) {
-    logger::trace("Hooks::CastSpellHook::thunk");
-    //originalFunction(caster, a2);
+RE::ActorValue Hooks::GetActorValueForCost::thunk(RE::MagicItem* a1, bool rightHand) {
+    auto av = Core::ProcessActorValueCost(a1);
+    if (av != RE::ActorValue::kNone) {
+        return av;
+    }
+    return originalFunction(a1, rightHand);
 }
