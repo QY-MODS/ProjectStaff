@@ -5,6 +5,7 @@ void Hooks::Install() {
     EquipSpellHook::Install();
     //UpdateHooks::Install();
     //EquipEvent::Install();
+    CastSpellHook::Install();
 }
 
 
@@ -83,4 +84,18 @@ void Hooks::UpdateHooks::Install() {
 void Hooks::UpdateHooks::thunk() { 
     originalFunction(); 
     float g_deltaTime = *(float*)REL::RelocationID(523660, 410199).address();
+}
+
+void Hooks::CastSpellHook::Install() {
+    //SE ID: 33663 SE Offset: 0x27 (Heuristic)
+    //AE ID: 34443 AE Offset: 0x27
+    SKSE::AllocTrampoline(14);
+    auto& trampoline = SKSE::GetTrampoline();
+    originalFunction =
+        trampoline.write_branch<5>(REL::RelocationID(33663, 34443).address() + REL::Relocate(0x27, 0x27), thunk);
+}
+
+void Hooks::CastSpellHook::thunk(RE::MagicCaster* caster, uint64_t a2) {
+    logger::trace("Hooks::CastSpellHook::thunk");
+    //originalFunction(caster, a2);
 }

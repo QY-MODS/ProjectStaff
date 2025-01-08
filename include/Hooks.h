@@ -19,6 +19,14 @@ namespace Hooks
         static inline REL::Relocation<decltype(thunk)> originalFunction;
     };
 
+    class CastSpellHook {
+    public:
+        static void Install();
+
+    private:
+        static void thunk(RE::MagicCaster* caster, uint64_t a2);
+        static inline REL::Relocation<decltype(thunk)> originalFunction;
+    };
 
     class EquipEvent final : public RE::BSTEventSink<RE::TESEquipEvent> {
     public:
