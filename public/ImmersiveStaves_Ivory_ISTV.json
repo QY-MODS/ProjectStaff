@@ -1,0 +1,100 @@
+[
+  {
+    "Keyword": "IS_IvoryAlteration",
+    "Alteration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_IvoryConjuration",
+    "Conjuration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_IvoryDestruction",
+    "Destruction": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_IvoryIllusion",
+    "Illusion": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_IvoryFalmer",
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_IvoryForsworn",
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  }
+]

@@ -1,0 +1,100 @@
+[
+  {
+    "Keyword": "IS_MysticAlteration",
+    "Alteration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_MysticConjuration",
+    "Conjuration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_MysticDestruction",
+    "Destruction": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_MysticIllusion",
+    "Illusion": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_MysticFalmer",
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
+    "Keyword": "IS_MysticForsworn",
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  }
+]
