@@ -181,9 +181,9 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
 
 bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
 
-    if (a_spell->IsTwoHanded()) {
-        return false;
-    }
+    //if (a_spell->IsTwoHanded()) {
+    //    return false;
+    //}
 
     if (auto obj = a_actor->GetEquippedEntryData(GetSlot(a_slot))) {
         if (obj->object) {
