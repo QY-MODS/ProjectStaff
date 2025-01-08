@@ -179,7 +179,12 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
     }
 }
 
-bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot) {
+bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
+
+    if (a_spell->IsTwoHanded()) {
+        return false;
+    }
+
     if (auto obj = a_actor->GetEquippedEntryData(GetSlot(a_slot))) {
         if (obj->object) {
             if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
@@ -228,9 +233,15 @@ bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_a
 
 RE::BGSEquipSlot* GetSlot(WornSlot slot) {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();
-    return dom
-        ->GetObject(slot == WornSlot::Left ? RE::DEFAULT_OBJECT::kLeftHandEquip : RE::DEFAULT_OBJECT::kRightHandEquip)
-        ->As<RE::BGSEquipSlot>();
+
+    if (slot == WornSlot::Left) {
+        return dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>();
+    }
+
+    if (slot == WornSlot::Right) {
+        return dom->GetObject(RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>();
+    }
+    return nullptr;
 }
 
 void Core::PostLoad() {

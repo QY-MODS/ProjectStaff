@@ -13,7 +13,7 @@ void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a
                                   RE::BGSEquipSlot** a_slot_ptr) {
 
     if (a_slot_ptr && a_actor->IsPlayerRef()) {
-        if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr)) {
+        if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell)) {
             auto slot = *a_slot_ptr;
             SkyrimScripting::ShowMessageBox("What do you want to do?",
                 {"Equip spell", "Apply Enchantment", "Cancel"}, [a_manager,a_actor,a_spell, slot](int i) {
