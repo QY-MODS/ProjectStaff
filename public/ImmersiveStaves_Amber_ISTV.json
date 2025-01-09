@@ -1,6 +1,6 @@
 [
   {
-    "Keyword": "IS_InfernoAlteration",
+    "Keyword": "IS_AmberAlteration",
     "Alteration": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,
@@ -19,7 +19,7 @@
     }
   },
   {
-    "Keyword": "IS_InfernoRestoration",
+    "Keyword": "IS_AmberRestoration",
     "Restoration": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,
@@ -38,7 +38,7 @@
     }
   },
   {
-    "Keyword": "IS_InfernoConjuration",
+    "Keyword": "IS_AmberConjuration",
     "Conjuration": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,
@@ -57,7 +57,7 @@
     }
   },
   {
-    "Keyword": "IS_InfernoDestruction",
+    "Keyword": "IS_AmberDestruction",
     "Destruction": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,
@@ -76,7 +76,7 @@
     }
   },
   {
-    "Keyword": "IS_InfernoIllusion",
+    "Keyword": "IS_AmberIllusion",
     "Illusion": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,
@@ -95,7 +95,7 @@
     }
   },
   {
-    "Keyword": "IS_InfernoFalmer",
+    "Keyword": "IS_AmberFalmer",
     "Default": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,
@@ -106,7 +106,7 @@
     }
   },
   {
-    "Keyword": "IS_InfernoForsworn",
+    "Keyword": "IS_AmberForsworn",
     "Default": {
       "MagnitudePercentage": 100,
       "AreaPercentage": 100,

@@ -19,6 +19,25 @@
     }
   },
   {
+    "Keyword": "IS_IvoryRestoration",
+    "Restoration": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    },
+    "Default": {
+      "MagnitudePercentage": 100,
+      "AreaPercentage": 100,
+      "DurationPercentage": 100,
+      "CostPercentage": 100,
+      "ChargingTimePercentage": 100,
+      "CostOverride": -1
+    }
+  },
+  {
     "Keyword": "IS_IvoryConjuration",
     "Conjuration": {
       "MagnitudePercentage": 100,
