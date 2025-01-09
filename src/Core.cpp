@@ -143,11 +143,8 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
 
     if (auto actor = a_actor->AsActorValueOwner()) {
         auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
-        logger::trace("mana: {}", mana);
 
         auto ench = se->enchantment;
-
-        staff->amountofEnchantment = 0;
 
         if (extra->HasType<RE::ExtraEnchantment>()) {
             auto e = extra->GetByType<RE::ExtraEnchantment>();
