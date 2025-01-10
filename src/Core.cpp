@@ -2,26 +2,30 @@
 
 #include "StaffEnchantment.h"
 
-RE::TESObjectWEAP* GetEquipedStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot) {
-    if (a_actor && a_slot) {
-        if (auto item = a_actor->GetEquippedObjectInSlot(a_slot)) {
-            if (auto weapon = item->As<RE::TESObjectWEAP>()) {
-                if (weapon->GetWeaponType() == RE::WEAPON_TYPE::kStaff) {
-                    return weapon;
-                }
-            }
-        }
+
+enum class WornSlot { None, Left, Right };
+
+RE::BGSEquipSlot* GetSlot(WornSlot slot) {
+    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
+
+    if (slot == WornSlot::Left) {
+        return dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>();
+    }
+
+    if (slot == WornSlot::Right) {
+        return dom->GetObject(RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>();
     }
     return nullptr;
 }
-enum class WornSlot { None, Left, Right };
 
-
-
-bool GetSlot(RE::BGSEquipSlot* slot) {
+WornSlot GetSlot(RE::BGSEquipSlot* slot) {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();
     auto left = dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip);
-    return slot == left;
+    return slot == left ? WornSlot::Left : WornSlot::Right;
+}
+
+WornSlot GetOtherHand(WornSlot slot) {
+    return slot == WornSlot::Left ? WornSlot::Right : WornSlot::Left;
 }
 
 RE::InventoryEntryData* GetEquipedStaff(RE::Actor* a_actor, WornSlot hand) {
@@ -186,70 +190,92 @@ RE::ActorValue Core::ProcessActorValueCost(RE::MagicItem* a1) {
     return RE::ActorValue::kNone;
 }
 
+StaffEnchantment* GetStaffEnchantment(RE::ExtraDataList* list) {
+    if (list->HasType<RE::ExtraEnchantment>()) {
+        if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {
+            if (auto item = ench->enchantment) {
+                auto it = dynamicForms.find(item->GetFormID());
+
+                if (it != dynamicForms.end()) {
+                    return it->second;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+RE::TESObjectWEAP* GetStaff(RE::InventoryEntryData* obj) {
+    if (!obj || !obj->object) {
+        return nullptr;
+    }
+    if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
+        if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
+            return weapon;
+        }
+    }
+    return nullptr;
+}
+
+bool IsAnyStaffEquiped(RE::InventoryEntryData* obj) {
+    if (auto weapon = GetStaff(obj)) {
+        if (StaffEnchantment::HasKeyword(weapon)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
 
     //if (a_spell->IsTwoHanded()) {
     //    return false;
     //}
 
-    if (auto obj = a_actor->GetEquippedEntryData(GetSlot(a_slot))) {
-        if (obj->object) {
-            if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
-                if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
-                    if (StaffEnchantment::HasKeyword(weapon)) {
-                        if (auto list = GetEquipedExtraList(obj)) {
-                            if (list->HasType<RE::ExtraEnchantment>()) {
-                                if (auto ench = list->GetByType<RE::ExtraEnchantment>()) {
-                                    if (auto item = ench->enchantment) {
-                                        return dynamicForms.find(item->GetFormID()) != dynamicForms.end();
-                                    }
-                                }
-                                return false;
-                            } else {
-                                return !weapon->formEnchanting;
-                            }
-                        }
-                    }
+    if (auto obj = a_actor->GetEquippedEntryData(false)) {
+        if (IsAnyStaffEquiped(obj)) {
+            return true;
+        }
+    }
+    if (auto obj = a_actor->GetEquippedEntryData(false)) {
+        if (IsAnyStaffEquiped(obj)) {
+            return true;
+        }
+    }
+    return false;
+}
+bool ProcessHandEquipedSpell(WornSlot hand, RE::Actor* a_actor, RE::SpellItem* a_spell) {
+    if (auto obj = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
+        if (auto weapon = GetStaff(obj)) {
+            if (auto extra = GetEquipedExtraList(obj)) {
+                if (auto ench = GetEnchantment(a_spell, extra, weapon)) {
+                    EnchantStaff(a_actor, weapon, extra, ench);
+                    RefreshEquipedItem(a_actor, weapon, extra, GetSlot(hand));
+                    return true;
                 }
             }
         }
     }
     return false;
 }
-
 bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                 RE::BGSEquipSlot* a_slot) {
-    if (auto obj = a_actor->GetEquippedEntryData(GetSlot(a_slot))) {
-        if (auto weapon = obj->object->As<RE::TESObjectWEAP>()) {
-            if (weapon->GetWeaponType() == RE::WeaponTypes::kStaff) {
-                if (auto extra = GetEquipedExtraList(obj)) {
-                    if (auto ench = GetEnchantment(a_spell, extra, weapon)) {
-                        EnchantStaff(a_actor, weapon, extra, ench);
-                        RefreshEquipedItem(a_actor, weapon, extra, a_slot);
-                    } else {
-                        return false;
-                    }
-                }
-            }
+    auto hand = GetSlot(a_slot);
 
-            return false;
-        }
+
+    if (ProcessHandEquipedSpell(hand, a_actor, a_spell)) {
+        return false;
     }
+
+    if (ProcessHandEquipedSpell(GetOtherHand(hand), a_actor, a_spell)) {
+        return false;
+    }
+
+
     return true;
 }
 
-RE::BGSEquipSlot* GetSlot(WornSlot slot) {
-    auto dom = RE::BGSDefaultObjectManager::GetSingleton();
 
-    if (slot == WornSlot::Left) {
-        return dom->GetObject(RE::DEFAULT_OBJECT::kLeftHandEquip)->As<RE::BGSEquipSlot>();
-    }
-
-    if (slot == WornSlot::Right) {
-        return dom->GetObject(RE::DEFAULT_OBJECT::kRightHandEquip)->As<RE::BGSEquipSlot>();
-    }
-    return nullptr;
-}
 
 void Core::PostLoad() {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();

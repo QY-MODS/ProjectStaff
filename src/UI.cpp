@@ -7,7 +7,7 @@ void UI::Register() {
     if (!SKSEMenuFramework::IsInstalled()) {
         return;
     }
-    SKSEMenuFramework::SetSection("SKSE Menu Framework Compiled Example 4");
+    SKSEMenuFramework::SetSection("Immersive Staves");
     SKSEMenuFramework::AddSectionItem("Add Item", Example1::Render);
 
 #endif
