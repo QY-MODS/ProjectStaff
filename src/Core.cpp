@@ -228,20 +228,26 @@ bool IsAnyStaffEquiped(RE::InventoryEntryData* obj) {
 
 bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
 
-    //if (a_spell->IsTwoHanded()) {
-    //    return false;
-    //}
 
-    if (auto obj = a_actor->GetEquippedEntryData(false)) {
+    auto hand = GetSlot(a_slot);
+
+    if (auto obj = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
         if (IsAnyStaffEquiped(obj)) {
             return true;
         }
     }
-    if (auto obj = a_actor->GetEquippedEntryData(false)) {
+
+    return false;
+}
+bool Core::IsAttemptingToEquipStaffOtherHand(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
+    auto hand = GetSlot(a_slot);
+
+    if (auto obj = a_actor->GetEquippedEntryData(GetOtherHand(hand) == WornSlot::Left)) {
         if (IsAnyStaffEquiped(obj)) {
             return true;
         }
     }
+
     return false;
 }
 bool ProcessHandEquipedSpell(WornSlot hand, RE::Actor* a_actor, RE::SpellItem* a_spell) {
@@ -258,7 +264,7 @@ bool ProcessHandEquipedSpell(WornSlot hand, RE::Actor* a_actor, RE::SpellItem* a
     }
     return false;
 }
-bool Core::ProcessEquippedSpell(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+bool Core::ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
                                 RE::BGSEquipSlot* a_slot) {
     auto hand = GetSlot(a_slot);
 

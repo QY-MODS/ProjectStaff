@@ -8,27 +8,41 @@ void Hooks::Install() {
     //EquipEvent::Install();
 }
 
-
+void ShowEquipMessageBox(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+                         RE::BGSEquipSlot* a_slot) {
+    SkyrimScripting::ShowMessageBox("What do you want to do?", {"Equip spell", "Apply Enchantment", "Cancel"},
+    [a_manager, a_actor, a_spell, a_slot](int i) {
+        if (i == 0) {
+            auto sl = a_slot;
+            Hooks::EquipSpellHook::originalFunction(a_manager, a_actor, a_spell, &sl);
+        } else if (i == 1) {
+            Core::ProcessEquippedSpell(a_actor, a_spell, a_slot);
+        }
+    });
+}
 
 void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                   RE::BGSEquipSlot** a_slot_ptr) {
 
     if (a_slot_ptr && a_actor->IsPlayerRef()) {
-        if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell)) {
-            auto slot = *a_slot_ptr;
-            SkyrimScripting::ShowMessageBox("What do you want to do?",
-                {"Equip spell", "Apply Enchantment", "Cancel"}, [a_manager,a_actor,a_spell, slot](int i) {
-                    if (i == 0) {
-                        auto sl = slot;
-                        originalFunction(a_manager, a_actor, a_spell, &sl);
-                    } else if (i == 1) {
-                        Core::ProcessEquippedSpell(a_manager, a_actor, a_spell, slot);
-                    }
-            });
-
+        if (
+            Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell) || 
+            Core::IsAttemptingToEquipStaffOtherHand(a_actor, *a_slot_ptr, a_spell)
+        ) {
+            ShowEquipMessageBox(a_manager, a_actor, a_spell, *a_slot_ptr);
             return;
         }
-        
+    }
+    originalFunction(a_manager, a_actor, a_spell, a_slot_ptr);
+}
+
+void Hooks::EquipSpellHook::thunkPresise(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+                                         RE::BGSEquipSlot** a_slot_ptr) {
+    if (a_slot_ptr && a_actor->IsPlayerRef()) {
+        if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell)) {
+            ShowEquipMessageBox(a_manager, a_actor, a_spell, *a_slot_ptr);
+            return;
+        }
     }
     originalFunction(a_manager, a_actor, a_spell, a_slot_ptr);
 }
@@ -45,9 +59,9 @@ void Hooks::EquipSpellHook::Install() {
     SKSE::AllocTrampoline(14 * 3);
     auto& trampoline = SKSE::GetTrampoline();
     originalFunction = trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7), // Click
-                                             thunk);  // Clicking
+                                             thunkPresise);  // Clicking
     trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
-    trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunk); // Commonlib
+    trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunkPresise); // Commonlib
 }
 
 RE::BSEventNotifyControl Hooks::EquipEvent::ProcessEvent(const RE::TESEquipEvent* a_event,
