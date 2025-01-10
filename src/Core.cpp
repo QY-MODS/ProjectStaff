@@ -224,6 +224,17 @@ bool IsAnyStaffEquiped(RE::InventoryEntryData* obj) {
 }
 
 bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
+
+    if (!a_spell) {
+        return false;
+    }
+
+    if (
+        a_spell->GetSpellType() != RE::MagicSystem::SpellType::kLeveledSpell &&
+        a_spell->GetSpellType() != RE::MagicSystem::SpellType::kSpell) {
+        return false;
+    }
+
     auto hand = GetSlot(a_slot);
 
     if (auto obj = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
