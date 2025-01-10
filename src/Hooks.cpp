@@ -21,22 +21,8 @@ void ShowEquipMessageBox(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, R
     });
 }
 
+
 void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
-                                  RE::BGSEquipSlot** a_slot_ptr) {
-
-    if (a_slot_ptr && a_actor->IsPlayerRef()) {
-        if (
-            Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell) || 
-            Core::IsAttemptingToEquipStaffOtherHand(a_actor, *a_slot_ptr, a_spell)
-        ) {
-            ShowEquipMessageBox(a_manager, a_actor, a_spell, *a_slot_ptr);
-            return;
-        }
-    }
-    originalFunction(a_manager, a_actor, a_spell, a_slot_ptr);
-}
-
-void Hooks::EquipSpellHook::thunkPresise(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                          RE::BGSEquipSlot** a_slot_ptr) {
     if (a_slot_ptr && a_actor->IsPlayerRef()) {
         if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell)) {
@@ -59,9 +45,9 @@ void Hooks::EquipSpellHook::Install() {
     SKSE::AllocTrampoline(14 * 3);
     auto& trampoline = SKSE::GetTrampoline();
     originalFunction = trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7), // Click
-                                             thunkPresise);  // Clicking
-    trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
-    trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunkPresise); // Commonlib
+                                 thunk);                                                                     // Clicking
+    //trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
+    //trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunkPresise); // Commonlib
 }
 
 RE::BSEventNotifyControl Hooks::EquipEvent::ProcessEvent(const RE::TESEquipEvent* a_event,

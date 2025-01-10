@@ -24,9 +24,6 @@ WornSlot GetSlot(RE::BGSEquipSlot* slot) {
     return slot == left ? WornSlot::Left : WornSlot::Right;
 }
 
-WornSlot GetOtherHand(WornSlot slot) {
-    return slot == WornSlot::Left ? WornSlot::Right : WornSlot::Left;
-}
 
 RE::InventoryEntryData* GetEquipedStaff(RE::Actor* a_actor, WornSlot hand) {
     if (auto entry = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
@@ -227,8 +224,6 @@ bool IsAnyStaffEquiped(RE::InventoryEntryData* obj) {
 }
 
 bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
-
-
     auto hand = GetSlot(a_slot);
 
     if (auto obj = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
@@ -239,17 +234,7 @@ bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot
 
     return false;
 }
-bool Core::IsAttemptingToEquipStaffOtherHand(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell) {
-    auto hand = GetSlot(a_slot);
 
-    if (auto obj = a_actor->GetEquippedEntryData(GetOtherHand(hand) == WornSlot::Left)) {
-        if (IsAnyStaffEquiped(obj)) {
-            return true;
-        }
-    }
-
-    return false;
-}
 bool ProcessHandEquipedSpell(WornSlot hand, RE::Actor* a_actor, RE::SpellItem* a_spell) {
     if (auto obj = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
         if (auto weapon = GetStaff(obj)) {
@@ -268,15 +253,9 @@ bool Core::ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
                                 RE::BGSEquipSlot* a_slot) {
     auto hand = GetSlot(a_slot);
 
-
     if (ProcessHandEquipedSpell(hand, a_actor, a_spell)) {
         return false;
     }
-
-    if (ProcessHandEquipedSpell(GetOtherHand(hand), a_actor, a_spell)) {
-        return false;
-    }
-
 
     return true;
 }
