@@ -131,7 +131,7 @@ for(const value of values){
         }
         let desc = Description.replace(/\{Type\}/gi, type);
         desc = desc.replace(/(\d+|Stamina|Magicka|Charge|Health)/gi, "<font color=\"#FFFFFF\">$1</font>");
-        descriptions += `IS_${Name}Staff${type}|${desc}|-1000\n`;
+        descriptions += `IS_${Name}Staff${type}|${desc}\n`;
         result.push(obj)
     }
 }

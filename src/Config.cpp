@@ -294,7 +294,7 @@ void Config::Load() {
             if (hasConjuration) {
                 Groups[keyword][RE::ActorValue::kConjuration] = ReadValueModifier(conjuration);
             }
-            auto [hasDestruction, destruction] = ReadObject(item, "Desruction");
+            auto [hasDestruction, destruction] = ReadObject(item, "Destruction");
 
             if (hasDestruction) {
                 Groups[keyword][RE::ActorValue::kDestruction] = ReadValueModifier(destruction);
@@ -304,6 +304,12 @@ void Config::Load() {
 
             if (hasIllusion) {
                 Groups[keyword][RE::ActorValue::kIllusion] = ReadValueModifier(illusion);
+            }
+
+            auto [hasRestoration, restoration] = ReadObject(item, "Restoration");
+
+            if (hasRestoration) {
+                Groups[keyword][RE::ActorValue::kRestoration] = ReadValueModifier(restoration);
             }
 
             auto [hasDefault, _default] = ReadObject(item, "Default");
