@@ -3,6 +3,7 @@ const types = [
     "Alteration",
     "Conjuration",
     "Restoration",
+    "Destruction",
     "Illusion",
     "Falmer",
     "Forsworn",
