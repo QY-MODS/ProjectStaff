@@ -143,17 +143,31 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
     }
 
     if (auto actor = a_actor->AsActorValueOwner()) {
-        auto mana = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
+        auto magicka = actor->GetBaseActorValue(RE::ActorValue::kMagicka);
+        auto health = actor->GetBaseActorValue(RE::ActorValue::kHealth);
+        auto stamina= actor->GetBaseActorValue(RE::ActorValue::kStamina);
+
+        auto charge = std::max(std::max(magicka, health), stamina);
 
         auto ench = se->enchantment;
 
         if (extra->HasType<RE::ExtraEnchantment>()) {
             auto e = extra->GetByType<RE::ExtraEnchantment>();
             e->enchantment = ench;
-            e->charge = mana;
+            if (se->costActorValue == RE::ActorValue::kNone) {
+                e->charge = charge;
+            } else {
+                e->charge = 0;
+            }
         } else {
             auto enchantment_fake = RE::BSExtraData::Create<RE::ExtraEnchantment>();
-            enchantment_fake->charge = mana;
+
+            if (se->costActorValue == RE::ActorValue::kNone) {
+                enchantment_fake->charge = charge;
+            } else {
+                enchantment_fake->charge = 0;
+            }
+
             enchantment_fake->enchantment = ench;
 
 
@@ -161,8 +175,8 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
 
             if (wornSlot != WornSlot::None) {
                 auto actorValue = GetChargeValue(wornSlot);
-                actor->SetActorValue(actorValue, mana);
-                actor->SetBaseActorValue(actorValue, mana);
+                actor->SetActorValue(actorValue, charge);
+                actor->SetBaseActorValue(actorValue, charge);
             }
 
             if (!extra->HasType<RE::ExtraTextDisplayData>()) {

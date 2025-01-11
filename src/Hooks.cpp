@@ -6,6 +6,11 @@ void Hooks::Install() {
     GetActorValueForCost::Install();
     //UpdateHooks::Install();
     //EquipEvent::Install();
+    //uint8_t data[] = {0x90, 0x90};
+    //uint8_t data[] = {0xeb, 0x2b};  
+    //REL::safe_write(REL::RelocationID(51020, 51898).address() + REL::Relocate(0x0, 0x577), data, sizeof(data));
+
+
 }
 
 void ShowEquipMessageBox(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
@@ -87,8 +92,9 @@ void Hooks::UpdateHooks::thunk() {
 void Hooks::GetActorValueForCost::Install() {
     SKSE::AllocTrampoline(14);
     auto& trampoline = SKSE::GetTrampoline();
-    originalFunction =
-        trampoline.write_call<5>(REL::RelocationID(33362, 34143).address() + REL::Relocate(0x151, 0x151), thunk);
+    originalFunction = trampoline.write_call<5>(REL::RelocationID(33362, 34143).address() + REL::Relocate(0x151, 0x151), thunk); // Drain
+    trampoline.write_call<5>(REL::RelocationID(33359, 34140).address() + REL::Relocate(0x4c, 0x4d), thunk); // Cancel  cast
+    trampoline.write_call<5>(REL::RelocationID(33364, 34145).address() + REL::Relocate(0xc1, 0xbe), thunk); // Can cast
 }
 
 RE::ActorValue Hooks::GetActorValueForCost::thunk(RE::MagicItem* a1, bool rightHand) {
