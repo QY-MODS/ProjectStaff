@@ -15,7 +15,7 @@ void Hooks::Install() {
 
 void ShowEquipMessageBox(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                          RE::BGSEquipSlot* a_slot) {
-    SkyrimScripting::ShowMessageBox("What do you want to do?", {"Equip spell", "Apply Enchantment", "Cancel"},
+    SkyrimScripting::ShowMessageBox("Where do you want to equip the spell?", {"Equip on Hand", "Equip on staff", "Cancel"},
     [a_manager, a_actor, a_spell, a_slot](int i) {
         if (i == 0) {
             auto sl = a_slot;

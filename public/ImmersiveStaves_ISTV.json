@@ -1,0 +1,432 @@
+[
+    {
+        "Keyword": "IS_AmberAlteration",
+        "Alteration": {
+            "MagnitudePercentage": 120,
+            "AreaPercentage": 100,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "AreaPercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        }
+    },
+    {
+        "Keyword": "IS_AmberConjuration",
+        "Conjuration": {
+            "MagnitudePercentage": 120,
+            "AreaPercentage": 100,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "AreaPercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        }
+    },
+    {
+        "Keyword": "IS_AmberRestoration",
+        "Restoration": {
+            "MagnitudePercentage": 120,
+            "AreaPercentage": 100,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "AreaPercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        }
+    },
+    {
+        "Keyword": "IS_AmberIllusion",
+        "Illusion": {
+            "MagnitudePercentage": 120,
+            "AreaPercentage": 100,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "AreaPercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "stamina"
+        }
+    },
+    {
+        "Keyword": "IS_AmberFalmer",
+        "Default": {
+            "MagnitudePercentage": 120,
+            "AreaPercentage": 100,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 200,
+            "CostActorValue": "stamina"
+        }
+    },
+    {
+        "Keyword": "IS_AmberForsworn",
+        "Default": {
+            "MagnitudePercentage": 100,
+            "AreaPercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 50,
+            "CostActorValue": "stamina"
+        }
+    },
+    {
+        "Keyword": "IS_ArcaneAlteration",
+        "Alteration": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        }
+    },
+    {
+        "Keyword": "IS_ArcaneConjuration",
+        "Conjuration": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        }
+    },
+    {
+        "Keyword": "IS_ArcaneRestoration",
+        "Restoration": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        }
+    },
+    {
+        "Keyword": "IS_ArcaneIllusion",
+        "Illusion": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 100,
+            "CostActorValue": "health"
+        }
+    },
+    {
+        "Keyword": "IS_ArcaneFalmer",
+        "Default": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 200,
+            "CostActorValue": "health"
+        }
+    },
+    {
+        "Keyword": "IS_ArcaneForsworn",
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 50,
+            "CostActorValue": "health"
+        }
+    },
+    {
+        "Keyword": "IS_InfernoAlteration",
+        "Alteration": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 200,
+            "DurationPercentage": 200,
+            "CostPercentage": 200
+        },
+        "Default": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 150,
+            "DurationPercentage": 150,
+            "CostPercentage": 200
+        }
+    },
+    {
+        "Keyword": "IS_InfernoConjuration",
+        "Conjuration": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 200,
+            "DurationPercentage": 200,
+            "CostPercentage": 200
+        },
+        "Default": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 150,
+            "DurationPercentage": 150,
+            "CostPercentage": 200
+        }
+    },
+    {
+        "Keyword": "IS_InfernoRestoration",
+        "Restoration": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 200,
+            "DurationPercentage": 200,
+            "CostPercentage": 200
+        },
+        "Default": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 150,
+            "DurationPercentage": 150,
+            "CostPercentage": 200
+        }
+    },
+    {
+        "Keyword": "IS_InfernoIllusion",
+        "Illusion": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 200,
+            "DurationPercentage": 200,
+            "CostPercentage": 200
+        },
+        "Default": {
+            "ChargingTimePercentage": 150,
+            "MagnitudePercentage": 150,
+            "DurationPercentage": 150,
+            "CostPercentage": 200
+        }
+    },
+    {
+        "Keyword": "IS_InfernoFalmer",
+        "Default": {
+            "ChargingTimePercentage": 300,
+            "MagnitudePercentage": 200,
+            "DurationPercentage": 200,
+            "CostPercentage": 200
+        }
+    },
+    {
+        "Keyword": "IS_InfernoForsworn",
+        "Default": {
+            "ChargingTimePercentage": 75,
+            "MagnitudePercentage": 150,
+            "DurationPercentage": 150,
+            "CostPercentage": 200
+        }
+    },
+    {
+        "Keyword": "IS_IvoryAlteration",
+        "Alteration": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 80,
+            "DurationPercentage": 80,
+            "ChargingTimePercentage": 80
+        },
+        "Default": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 50,
+            "DurationPercentage": 50,
+            "ChargingTimePercentage": 80
+        }
+    },
+    {
+        "Keyword": "IS_IvoryConjuration",
+        "Conjuration": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 80,
+            "DurationPercentage": 80,
+            "ChargingTimePercentage": 80
+        },
+        "Default": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 50,
+            "DurationPercentage": 50,
+            "ChargingTimePercentage": 80
+        }
+    },
+    {
+        "Keyword": "IS_IvoryRestoration",
+        "Restoration": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 80,
+            "DurationPercentage": 80,
+            "ChargingTimePercentage": 80
+        },
+        "Default": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 50,
+            "DurationPercentage": 50,
+            "ChargingTimePercentage": 80
+        }
+    },
+    {
+        "Keyword": "IS_IvoryIllusion",
+        "Illusion": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 80,
+            "DurationPercentage": 80,
+            "ChargingTimePercentage": 80
+        },
+        "Default": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 50,
+            "DurationPercentage": 50,
+            "ChargingTimePercentage": 80
+        }
+    },
+    {
+        "Keyword": "IS_IvoryFalmer",
+        "Default": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 80,
+            "DurationPercentage": 80,
+            "ChargingTimePercentage": 160
+        }
+    },
+    {
+        "Keyword": "IS_IvoryForsworn",
+        "Default": {
+            "CostPercentage": 50,
+            "MagnitudePercentage": 50,
+            "DurationPercentage": 50,
+            "ChargingTimePercentage": 40
+        }
+    },
+    {
+        "Keyword": "IS_MysticAlteration",
+        "Alteration": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        }
+    },
+    {
+        "Keyword": "IS_MysticConjuration",
+        "Conjuration": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        }
+    },
+    {
+        "Keyword": "IS_MysticRestoration",
+        "Restoration": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        }
+    },
+    {
+        "Keyword": "IS_MysticIllusion",
+        "Illusion": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        },
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 80,
+            "CostActorValue": "charge"
+        }
+    },
+    {
+        "Keyword": "IS_MysticFalmer",
+        "Default": {
+            "MagnitudePercentage": 120,
+            "DurationPercentage": 120,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 160,
+            "CostActorValue": "charge"
+        }
+    },
+    {
+        "Keyword": "IS_MysticForsworn",
+        "Default": {
+            "MagnitudePercentage": 100,
+            "DurationPercentage": 100,
+            "CostPercentage": 100,
+            "ChargingTimePercentage": 40,
+            "CostActorValue": "charge"
+        }
+    }
+]
