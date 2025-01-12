@@ -1,9 +1,6 @@
 #include "StaffEnchantment.h"
 
 
-
-
-
 bool StaffEnchantment::GetValueModifierGroup(ValueModifier& group) {
     auto it = Groups.find(keyword);
     if (it == Groups.end()) {
@@ -80,6 +77,19 @@ void StaffEnchantment::CopyEffects() {
         copy->cost *= vm.costPercentage / 100;
 
         enchantment->effects.push_back(copy);
+    }
+
+
+    auto& costMap = spell->GetCastingType() == RE::MagicSystem::CastingType::kConcentration ? costEffectMapPerSecound : costEffectMap;
+
+    auto it = costMap.find(vm.costActorValue);
+    if (it != costMap.end()) {
+        if (auto effect = it->second->Get()) {
+            auto copy = new RE::Effect();
+            copy->baseEffect = effect;
+            copy->effectItem.magnitude = enchantment->CalculateMagickaCost(nullptr);
+            enchantment->effects.push_back(copy);
+        }
     }
 
     if (vm.costOverride >= 0) {

@@ -62,10 +62,11 @@ RE::TESForm* GetEquippedObjectInSlot(const RE::Actor* actor, const RE::BGSEquipS
 
 void RefreshEquipedItem(RE::Actor* a_actor, RE::TESBoundObject* a_object, RE::ExtraDataList* a_extraData,
                         RE::BGSEquipSlot* a_slot) {
+
     RE::ActorEquipManager::GetSingleton()->UnequipObject(a_actor, a_object, nullptr, 1, a_slot, true, false, false,
-                                                         true, nullptr);
-    RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false, false,
-                                                       true);
+                                                            true, nullptr);
+    RE::ActorEquipManager::GetSingleton()->EquipObject(a_actor, a_object, a_extraData, 1, a_slot, true, false,
+                                                        false, true);
 }
 
 RE::ActorValue GetChargeValue(WornSlot slot) {
@@ -96,7 +97,6 @@ StaffEnchantment* GetEnchantment(RE::SpellItem* spell, RE::ExtraDataList* extra,
 
     if (extra->HasType<RE::ExtraEnchantment>()) {
         auto e = extra->GetByType<RE::ExtraEnchantment>();
-
         if (e->enchantment) {
             auto it = dynamicForms.find(e->enchantment->GetFormID());
             if (it != dynamicForms.end()) {
@@ -169,7 +169,6 @@ void EnchantStaff(RE::Actor* a_actor, RE::TESObjectWEAP* staff, RE::ExtraDataLis
             }
 
             enchantment_fake->enchantment = ench;
-
 
             extra->Add(enchantment_fake);
 

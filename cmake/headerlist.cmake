@@ -7,6 +7,7 @@ set(headers ${headers}
 	include/Core.h
 	include/Persistence.h
 	include/Serializer.h
+	include/FormSingleton.h
 	include/StaffEnchantment.h
 	include/MessageBox.h
 	include/Config.h

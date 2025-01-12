@@ -49,6 +49,10 @@ void __stdcall UI::Example1::Render() {
 
     int i = 0;
     for (auto [key, value] : Groups) {
+
+
+
+        ImGui::Text(std::format("Num Dynamic forms: {}", dynamicForms.size()).c_str());
         ImGui::Text(std::format("Keyword: {}", key).c_str());
         
         if (ImGui::Button(std::format("Add##add_{}", i++).c_str())) {
