@@ -286,12 +286,14 @@ bool Core::ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
 }
 
 
-void Core::StopCastIfAvIsEmpty(RE::ActorValue av) {
+void Core::StopCastIfAvIsEmpty(RE::MagicItem* magicItem, RE::ActorValue actorValue) {
     auto player = RE::PlayerCharacter::GetSingleton();
 
-     if (auto actor = player->AsActorValueOwner()) {
-        if (actor->GetActorValue(av) <= 0) {
-            player->InterruptCast(true);
+    if (player->IsCasting(magicItem)) {
+         if (auto actor = player->AsActorValueOwner()) {
+            if (actor->GetActorValue(actorValue) <= 0) {
+                player->InterruptCast(true);
+            }
         }
     }
 }

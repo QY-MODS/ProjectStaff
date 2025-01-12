@@ -10,7 +10,7 @@ namespace Core {
     bool ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
                               RE::BGSEquipSlot* a_slot);
     
-    void StopCastIfAvIsEmpty(RE::ActorValue av);
+    void StopCastIfAvIsEmpty(RE::MagicItem* magicItem, RE::ActorValue av);
 
     void PostLoad();
 }

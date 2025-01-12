@@ -97,11 +97,11 @@ void Hooks::GetActorValueForCost::Install() {
     trampoline.write_call<5>(REL::RelocationID(33364, 34145).address() + REL::Relocate(0xc1, 0xbe), thunk); // Can cast
 }
 
-RE::ActorValue Hooks::GetActorValueForCost::thunk(RE::MagicItem* a1, bool rightHand) {
-    auto av = Core::ProcessActorValueCost(a1);
-    if (av != RE::ActorValue::kNone) {
-        Core::StopCastIfAvIsEmpty(av);
-        return av;
+RE::ActorValue Hooks::GetActorValueForCost::thunk(RE::MagicItem* magicItem, bool rightHand) {
+    auto dynamicFormActorValue = Core::ProcessActorValueCost(magicItem);
+    if (dynamicFormActorValue != RE::ActorValue::kNone) {
+        Core::StopCastIfAvIsEmpty(magicItem, dynamicFormActorValue);
+        return dynamicFormActorValue;
     }
-    return originalFunction(a1, rightHand);
+    return originalFunction(magicItem, rightHand);
 }

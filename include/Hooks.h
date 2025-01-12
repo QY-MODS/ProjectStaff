@@ -24,7 +24,7 @@ namespace Hooks
         static void Install();
 
     private:
-        static RE::ActorValue thunk(RE::MagicItem* a1, bool rightHand);
+        static RE::ActorValue thunk(RE::MagicItem* magicItem, bool rightHand);
         static inline REL::Relocation<decltype(thunk)> originalFunction;
     };
 
