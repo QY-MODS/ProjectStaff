@@ -286,6 +286,16 @@ bool Core::ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
 }
 
 
+void Core::StopCastIfAvIsEmpty(RE::ActorValue av) {
+    auto player = RE::PlayerCharacter::GetSingleton();
+
+     if (auto actor = player->AsActorValueOwner()) {
+        if (actor->GetActorValue(av) <= 0) {
+            player->InterruptCast(true);
+        }
+    }
+}
+
 
 void Core::PostLoad() {
     auto dom = RE::BGSDefaultObjectManager::GetSingleton();

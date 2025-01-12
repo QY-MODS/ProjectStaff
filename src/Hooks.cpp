@@ -100,6 +100,7 @@ void Hooks::GetActorValueForCost::Install() {
 RE::ActorValue Hooks::GetActorValueForCost::thunk(RE::MagicItem* a1, bool rightHand) {
     auto av = Core::ProcessActorValueCost(a1);
     if (av != RE::ActorValue::kNone) {
+        Core::StopCastIfAvIsEmpty(av);
         return av;
     }
     return originalFunction(a1, rightHand);
