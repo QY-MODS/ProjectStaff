@@ -42,14 +42,16 @@ const values = [
             // "ChargingTimePercentage": 100,
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 130
+            "CostPercentage": 130,
+            "CostActorValue":"health"
         },
         "Other":{
             // "AreaPercentage": 100,
             // "ChargingTimePercentage": 100,
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue":"health"
         }
     },
     {

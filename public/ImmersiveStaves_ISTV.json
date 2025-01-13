@@ -70,12 +70,14 @@
         "Alteration": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 130
+            "CostPercentage": 130,
+            "CostActorValue": "health"
         },
         "Default": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue": "health"
         }
     },
     {
@@ -83,12 +85,14 @@
         "Conjuration": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 130
+            "CostPercentage": 130,
+            "CostActorValue": "health"
         },
         "Default": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue": "health"
         }
     },
     {
@@ -96,12 +100,14 @@
         "Restoration": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 130
+            "CostPercentage": 130,
+            "CostActorValue": "health"
         },
         "Default": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue": "health"
         }
     },
     {
@@ -109,12 +115,14 @@
         "Destruction": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 130
+            "CostPercentage": 130,
+            "CostActorValue": "health"
         },
         "Default": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue": "health"
         }
     },
     {
@@ -122,12 +130,14 @@
         "Illusion": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 130
+            "CostPercentage": 130,
+            "CostActorValue": "health"
         },
         "Default": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue": "health"
         }
     },
     {
@@ -135,7 +145,8 @@
         "Default": {
             "MagnitudePercentage": 150,
             "DurationPercentage": 150,
-            "CostPercentage": 150
+            "CostPercentage": 150,
+            "CostActorValue": "health"
         }
     },
     {
@@ -143,7 +154,8 @@
         "Default": {
             "MagnitudePercentage": 130,
             "DurationPercentage": 130,
-            "CostPercentage": 110
+            "CostPercentage": 110,
+            "CostActorValue": "health"
         }
     },
     {
