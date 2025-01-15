@@ -1,0 +1,2 @@
+CONT DLC2TreasWerewolfChestBoss
+CONT DLC2TreasWerebearChestBoss

@@ -158,5 +158,5 @@ for(const value of values){
         result.push(obj)
     }
 }
-fs.writeFileSync("ImmersiveStaves_ISTV.json", JSON.stringify(result, null, 4))
-fs.writeFileSync("ImmersiveStaves_DESC.ini", descriptions)
+fs.writeFileSync("../../ImmersiveStaves_ISTV.json", JSON.stringify(result, null, 4))
+fs.writeFileSync("../../ImmersiveStaves_DESC.ini", descriptions)

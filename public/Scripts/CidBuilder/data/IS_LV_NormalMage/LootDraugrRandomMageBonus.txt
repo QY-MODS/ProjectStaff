@@ -1,0 +1,5 @@
+NPC_ dunLabyrinthianSkeletonMage
+NPC_ DLC1dunHarkonVCSkeletonMage_Ambush
+NPC_ DLC1dunLabyrinthianSkeletonAmbushMage
+NPC_ DLC1VCSkeletonMage
+NPC_ DLC1VCSkeletonMage_Ambush

@@ -1,0 +1,2 @@
+CONT DLC2TreasWarlockChestBoss
+CONT DLC2TreasApocryphaChestBoss

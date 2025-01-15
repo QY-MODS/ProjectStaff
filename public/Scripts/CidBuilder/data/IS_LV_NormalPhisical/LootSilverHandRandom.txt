@@ -1,0 +1,15 @@
+NPC_ LvlSilverhandMelee1H
+NPC_ LvlSilverhandMissile
+NPC_ LvlSilverhandMelee2H
+NPC_ LvlSilverHandMeleeAny
+NPC_ LvlSilverhandMelee1HAggro1024
+NPC_ LvlSilverhandMissile_Aggro1024
+NPC_ DunGallowsRock_LvlSilverHandMissileHold
+NPC_ TreasCorpseSilverHandNordMale
+NPC_ TreasCorpseSilverHandNordFemale
+NPC_ LvlSilverhandMissile_HoldPos256
+NPC_ LvlSilverHandAmbush4
+NPC_ LvlSilverHandAmbush1
+NPC_ LvlSilverHandAmbush3
+NPC_ LvlSilverHandAmbush2
+NPC_ LvlSilverHandAmbush5

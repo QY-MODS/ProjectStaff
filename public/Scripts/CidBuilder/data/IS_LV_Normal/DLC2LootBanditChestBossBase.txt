@@ -1,0 +1,3 @@
+CONT DLC2TreasRieklingChestBoss
+CONT DLC2TreasBanditChestBoss
+CONT DLC2dunFrostmoonTreasChest

@@ -1,0 +1,2 @@
+CONT TreasBanditChestBoss
+CONT TG04GulumEiKillChest
