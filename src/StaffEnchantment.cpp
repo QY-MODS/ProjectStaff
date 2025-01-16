@@ -67,14 +67,27 @@ void StaffEnchantment::CopyEffects() {
     for (auto effect : spell->effects) {
         auto copy = new RE::Effect();
         copy->effectItem = effect->effectItem;
+
+        auto mag = copy->effectItem.magnitude * vm.magnitudePercentage / 100;
+
+        if (
+            effect->baseEffect && 
+            effect->baseEffect->data.archetype == RE::EffectArchetype::kValueModifier &&
+            effect->baseEffect->data.primaryAV == costActorValue &&
+            effect->baseEffect->data.delivery == RE::MagicSystem::Delivery::kSelf
+        )
+        {
+            copy->effectItem.magnitude = std::min(0.f, mag);
+        } else {
+            copy->effectItem.magnitude = mag;
+        }
+
         copy->baseEffect = effect->baseEffect;
-        copy->cost = effect->cost;
+        copy->cost = effect->cost * vm.costPercentage / 100;
         copy->conditions = effect->conditions;
 
         copy->effectItem.area *= vm.areaPercentage / 100;
         copy->effectItem.duration *= vm.durationPercentage / 100;
-        copy->effectItem.magnitude *= vm.magnitudePercentage / 100;
-        copy->cost *= vm.costPercentage / 100;
 
         enchantment->effects.push_back(copy);
     }
