@@ -15,7 +15,7 @@ set(steam_mods_output true)
 # If you use CMake features from higher versions, update this to match.
 cmake_minimum_required(VERSION 3.21)
 # Set your project name. This will be the name of your SKSE .dll file.
-set(AUTHOR_NAME "AuthorName")
+set(AUTHOR_NAME "SkyrimThiago")
 set(PRODUCT_NAME "ImmersiveStaves")
 set(BEAUTIFUL_NAME "Immersive Staves")
 
