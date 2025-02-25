@@ -60,9 +60,9 @@ void StaffEnchantment::CopyEffects() {
     }
 
     enchantment->effects.clear();
-    enchantment->avEffectSetting = nullptr;
-
+    enchantment->hostileCount = spell->hostileCount;
     enchantment->data.spellType = RE::MagicSystem::SpellType::kStaffEnchantment;
+    enchantment->avEffectSetting = spell->avEffectSetting;
 
     for (auto effect : spell->effects) {
         auto copy = new RE::Effect();
