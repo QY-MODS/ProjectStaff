@@ -6,8 +6,11 @@ namespace Hooks
 	void Install();
 
     struct EquipSpellHook {
-        static void thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell, RE::BGSEquipSlot** a_slot);
-        static inline REL::Relocation<decltype(thunk)> originalFunction;
+        static void thunkPrecise(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+                                 RE::BGSEquipSlot** a_slot_ptr);
+        static void thunkGeneric(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+                                 RE::BGSEquipSlot** a_slot_ptr);
+        static inline REL::Relocation<decltype(thunkPrecise)> originalFunction;
         static void Install();
     };
 

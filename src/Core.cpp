@@ -2,6 +2,7 @@
 
 #include "StaffEnchantment.h"
 
+#include "MessageBox.h"
 
 enum class WornSlot { None, Left, Right };
 
@@ -259,6 +260,31 @@ bool Core::IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot
     return false;
 }
 
+
+bool Core::IsAttemptingToEquipStaffGeneric(RE::Actor* a_actor, RE::SpellItem* a_spell) {
+    if (!a_spell) {
+        return false;
+    }
+
+    if (a_spell->GetSpellType() != RE::MagicSystem::SpellType::kLeveledSpell &&
+        a_spell->GetSpellType() != RE::MagicSystem::SpellType::kSpell) {
+        return false;
+    }
+
+    if (auto obj = a_actor->GetEquippedEntryData(true)) {
+        if (IsAnyStaffEquiped(obj)) {
+            return true;
+        }
+    }
+
+    if (auto obj = a_actor->GetEquippedEntryData(false)) {
+        if (IsAnyStaffEquiped(obj)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool ProcessHandEquipedSpell(WornSlot hand, RE::Actor* a_actor, RE::SpellItem* a_spell) {
     if (auto obj = a_actor->GetEquippedEntryData(hand == WornSlot::Left)) {
         if (auto weapon = GetStaff(obj)) {
@@ -282,6 +308,59 @@ bool Core::ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
     }
 
     return true;
+}
+void ShowEquipMessageBox(RE::Actor* a_actor, RE::SpellItem* a_spell) {
+    SkyrimScripting::ShowMessageBox("Where do you want to equip the spell?",
+                                    {"Equip on Left", "Equip on Right", "Equip on Both", "Cancel"},
+                                    [a_actor, a_spell](int i) {
+                                        
+                                        switch (i) {
+                                            case 0:
+                                                ProcessHandEquipedSpell(WornSlot::Left, a_actor, a_spell);
+                                            case 1:
+                                                ProcessHandEquipedSpell(WornSlot::Right, a_actor, a_spell);
+                                            case 2:
+                                                ProcessHandEquipedSpell(WornSlot::Left, a_actor, a_spell);
+                                                ProcessHandEquipedSpell(WornSlot::Right, a_actor, a_spell);
+                                            default:
+                                                break;
+                                        }
+                                    });
+}
+
+bool Core::ProcessEquippedSpellGeneric(RE::Actor* a_actor, RE::SpellItem* a_spell) {
+
+    bool left = false;
+    bool right = false;
+
+    bool result = true;
+
+    if (auto obj = a_actor->GetEquippedEntryData(true)) {
+        if (IsAnyStaffEquiped(obj)) {
+            left = true;
+            result = false;
+        }
+    }
+
+    if (auto obj = a_actor->GetEquippedEntryData(false)) {
+        if (IsAnyStaffEquiped(obj)) {
+            right = true;
+            result = false;
+        }
+    }
+
+    if (left && right) {
+        logger::trace("left & right");
+        ShowEquipMessageBox(a_actor, a_spell);
+    } else if (left) {
+        logger::trace("left");
+        ProcessHandEquipedSpell(WornSlot::Left, a_actor, a_spell);
+    } else if (right) {
+        logger::trace("right");
+        ProcessHandEquipedSpell(WornSlot::Right, a_actor, a_spell);
+    }
+
+    return result;
 }
 
 

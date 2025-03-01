@@ -7,8 +7,10 @@ namespace Core {
 
     RE::ActorValue ProcessActorValueCost(RE::MagicItem* a1);
     bool IsAttemptingToEquipStaff(RE::Actor* a_actor, RE::BGSEquipSlot* a_slot, RE::SpellItem* a_spell);
-    bool ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell,
-                              RE::BGSEquipSlot* a_slot);
+    bool IsAttemptingToEquipStaffGeneric(RE::Actor* a_actor, RE::SpellItem* a_spell);
+    bool ProcessEquippedSpell(RE::Actor* a_actor, RE::SpellItem* a_spell, RE::BGSEquipSlot* a_slot);
+
+    bool ProcessEquippedSpellGeneric(RE::Actor* a_actor, RE::SpellItem* a_spell);
     
     void StopCastIfAvIsEmpty(RE::MagicItem* magicItem, RE::ActorValue av);
 

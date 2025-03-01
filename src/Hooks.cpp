@@ -1,6 +1,5 @@
 #include "Hooks.h"
 #include "Core.h"
-#include "MessageBox.h"
 void Hooks::Install() {
     EquipSpellHook::Install();
     GetActorValueForCost::Install();
@@ -13,25 +12,27 @@ void Hooks::Install() {
 
 }
 
-void ShowEquipMessageBox(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
-                         RE::BGSEquipSlot* a_slot) {
-    SkyrimScripting::ShowMessageBox("Where do you want to equip the spell?", {"Equip on Hand", "Equip on staff", "Cancel"},
-    [a_manager, a_actor, a_spell, a_slot](int i) {
-        if (i == 0) {
-            auto sl = a_slot;
-            Hooks::EquipSpellHook::originalFunction(a_manager, a_actor, a_spell, &sl);
-        } else if (i == 1) {
-            Core::ProcessEquippedSpell(a_actor, a_spell, a_slot);
-        }
-    });
-}
 
 
-void Hooks::EquipSpellHook::thunk(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+void Hooks::EquipSpellHook::thunkPrecise(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
                                          RE::BGSEquipSlot** a_slot_ptr) {
+    logger::trace("zz");
     if (a_slot_ptr && a_actor->IsPlayerRef()) {
         if (Core::IsAttemptingToEquipStaff(a_actor, *a_slot_ptr, a_spell)) {
-            ShowEquipMessageBox(a_manager, a_actor, a_spell, *a_slot_ptr);
+            Core::ProcessEquippedSpell(a_actor, a_spell, *a_slot_ptr);
+            //ShowEquipMessageBox(a_manager, a_actor, a_spell, *a_slot_ptr);
+            return;
+        }
+    }
+    originalFunction(a_manager, a_actor, a_spell, a_slot_ptr);
+}
+
+void Hooks::EquipSpellHook::thunkGeneric(RE::ActorEquipManager* a_manager, RE::Actor* a_actor, RE::SpellItem* a_spell,
+                                         RE::BGSEquipSlot** a_slot_ptr) {
+    logger::trace("hello");
+    if (a_actor->IsPlayerRef()) {
+        if (Core::IsAttemptingToEquipStaffGeneric(a_actor, a_spell)) {
+            Core::ProcessEquippedSpellGeneric(a_actor, a_spell);
             return;
         }
     }
@@ -49,10 +50,9 @@ void Hooks::EquipSpellHook::Install() {
     //AE ID: 38895 AE Offset: 0x47
     SKSE::AllocTrampoline(14 * 3);
     auto& trampoline = SKSE::GetTrampoline();
-    originalFunction = trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7), // Click
-                                 thunk);                                                                     // Clicking
-    //trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunk); // Hotkey
-    //trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunkPresise); // Commonlib
+    originalFunction = trampoline.write_call<5>(REL::RelocationID(37952, 38908).address() + REL::Relocate(0xd7, 0xd7),thunkPrecise);    // Click
+    trampoline.write_call<5>(REL::RelocationID(37950, 38906).address() + REL::Relocate(0xc5, 0xca), thunkGeneric);                      // Hotkey
+    trampoline.write_call<5>(REL::RelocationID(37939, 38895).address() + REL::Relocate(0x47, 0x47), thunkPrecise);                      // Commonlib
 }
 
 RE::BSEventNotifyControl Hooks::EquipEvent::ProcessEvent(const RE::TESEquipEvent* a_event,
