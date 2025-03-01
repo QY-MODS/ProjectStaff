@@ -100,7 +100,7 @@ void StaffEnchantment::CopyEffects() {
         enchantment->data.costOverride = vm.costOverride;
         enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
     } else {
-        enchantment->data.costOverride = spell->data.costOverride;
+        enchantment->data.costOverride = spell->data.costOverride * vm.costPercentage / 100;
         if (spell->data.flags & RE::SpellItem::SpellFlag::kCostOverride) {
             enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
         }
