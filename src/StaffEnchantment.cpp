@@ -95,6 +95,23 @@ void StaffEnchantment::CopyEffects() {
 
     auto& costMap = spell->GetCastingType() == RE::MagicSystem::CastingType::kConcentration ? costEffectMapPerSecound : costEffectMap;
 
+
+    if (vm.costOverride >= 0) {
+        enchantment->data.costOverride = vm.costOverride;
+        enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
+    } else {
+        enchantment->data.costOverride = spell->data.costOverride;
+        if (spell->data.flags & RE::SpellItem::SpellFlag::kCostOverride) {
+            enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
+        }
+    }
+
+    enchantment->data.chargeTime = spell->GetChargeTime() * vm.chargingTimePercentage / 100;
+    enchantment->data.castingType = spell->GetCastingType();
+    enchantment->data.delivery = spell->GetDelivery();
+
+    costActorValue = vm.costActorValue;
+
     auto it = costMap.find(vm.costActorValue);
     if (it != costMap.end()) {
         if (auto effect = it->second->Get()) {
@@ -104,15 +121,4 @@ void StaffEnchantment::CopyEffects() {
             enchantment->effects.push_back(copy);
         }
     }
-
-    if (vm.costOverride >= 0) {
-        enchantment->data.costOverride = vm.costOverride;
-        enchantment->data.flags |= RE::EnchantmentItem::EnchantmentFlag::kCostOverride;
-    }
-
-    enchantment->data.chargeTime = spell->GetChargeTime() * vm.chargingTimePercentage / 100;
-    enchantment->data.castingType = spell->GetCastingType();
-    enchantment->data.delivery = spell->GetDelivery();
-
-    costActorValue = vm.costActorValue;
 }
